@@ -1,15 +1,25 @@
-const _resolveMe: Resolvers["Query"]["featureFeed"] = async (
-    _parent,
-    args,
-    ctx
-) => {
-    const { user: mongooseUser } = ctx;
-    const { lng, lat, logUserId, sessionId, viewId, limit = 100 } = args;
+import { UserRepository } from "src/modules/users/domain";
 
-    return null;
-};
+const _resolveMe =
+    (userRepo: UserRepository): Resolvers["Query"]["featureFeed"] =>
+    async (_parent, args, ctx) => {
+        const { user: mongooseUser } = ctx;
+        const { lng, lat, logUserId, sessionId, viewId, limit = 100 } = args;
 
-export const userQueryResolver: Resolvers["Query"] = {
-    me: _resolveMe,
-    profile: _resolveMe,
-};
+        return null;
+    };
+
+const _resolveProfile =
+    (userRepo: UserRepository): Resolvers["Query"]["featureFeed"] =>
+    async (_parent, args, ctx) => {
+        const { username } = args;
+
+        return null;
+    };
+
+export const userQueryResolver: Resolvers["Query"] = (
+    userRepo: UserRepository
+) => ({
+    me: _resolveMe(userRepo),
+    profile: _resolveProfile(userRepo),
+});

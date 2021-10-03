@@ -3,7 +3,15 @@ enum QuestionType {
     ShortAnswer
 }
 
+type QuestionOption {
+    id: String!
+    label: String!
+    value: String!
+}
+
 type Question {
     title: String!
     type: QuestionType!
+    required: Bool!
+    options: [QuestionOption]
 }

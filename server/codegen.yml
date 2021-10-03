@@ -5,10 +5,6 @@ config:
         Date: Date
 generates:
     src/core/surfaces/graphql/generated/types.ts:
-        # config:
-        #     # contextType: src/core/surfaces/graphql/shield/context#Context
-        #     mappers:
-        #         # Feature: src/modules/feature/surfaces/graphql/types#FeatureGQLRoot
         plugins:
             - "typescript"
             - "typescript-resolvers"

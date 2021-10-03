@@ -8,6 +8,12 @@ const AuthProviderSchema = new Schema({
     providerId: { type: String, default: null },
 });
 
+const UserResponseSchema = new Schema({
+    questionId: { type: String, required: true },
+    title: { type: String, enum: AUTH_PROVIDER_ENUM, required: true },
+    answer: { type: String, default: null },
+});
+
 const UserSchema = new Schema({
     name: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -15,6 +21,7 @@ const UserSchema = new Schema({
     email: { type: String, required: true },
     username: { type: String, required: true },
     auth: { type: AuthProviderSchema, required: true },
+    responses: [UserResponseSchema],
 });
 
 export interface UserAuthDocument extends Document {

@@ -1,11 +1,87 @@
 ## Overview
 
-TODO: approach for the project
+Welcome! This project is my crack at creating a product that allows users to create a profile, 
+answer questions about themselves, and share their profile with their friends.
+
+Product Specs:
+https://docs.google.com/document/d/1X489tP9UUZJ8hncXRbeDZ5BZ6NURqCSoWfTcn99EWFU/edit#heading=h.gxl3ja4odl7w
+
+# Technology:
+
+This stack is typescript across the board. I chose to use React + node.js for a few reasons:
+
+1) I am most familiar with this stack (6 years of professional experience)
+2) Quick to write and less context switching (frontend + backend share same language)
+
+I paired this with Clean Architecture, which is a common programming pattern that helps accomplish some of the following:
+
+1) Layered architecture where dependencies are clear and clean 
+2) Flexible to change and swapping out layers later bc of loose coupling
+
+Most of my professional experience is with just general CRUD REST APIs, but recently 
+I have been using more and more GraphQL, so I chose that for this project. 
+
+GraphQL has loads of benefits like enforcing request + response contracts/datatypes, 
+built in field level permissions, built in type generation, and more. 
+
+I chose MongoDB because I similarly have a lot of experience with it, and for this use case 
+nosql makes sense and embedding all user information into one document that doesn't need any 
+joins works well. If this was a financial application, I would be more inclined to use 
+a relational DB like postgres for guaranteed ACID transactions.
+
+# Dependencies
+
+I chose to use Firebase to handle all the authentication. Firebase makes it easy to plugin 
+social logins, and also handles all of the JWT signing/verifying/revoking in addition to 
+rate limiting logins and a bunch of other goodies.
+
+I'd rather use a tried and testing 3rd party, like Firebase (or auth0 but I don't have experience with it),
+than try to roll it myself.
+
+# Design
+
+For the design, happy to walk through the code in person but overall there are two main discussion areas: 
+the db model and the question service.
+
+## DB Model
+The data model design really only involves one model: the user. All user profile information 
+is stored on the user document, including their Q/A responses. 
+
+I did this because 1) I think embedding their responses as part of their profile makes sense 
+and 2) eliminates joins which can get slow. 
+
+If a user could answer unlimited questions (wasn't capped at 3), I would not embed this information on 
+the user document (embedding uncapped arrays in docs is an anti-pattern in mongo), but instead 
+break it out into a separate collection.
+
+## Question Service
+For the question service, I decided to have the client pull the questions from the server for the user to answer. 
+This adds latency to the Q/A screen, but also gives us more flexibility to change the questions.
+
+You could imagine adding a mobile application where users could also answer questions from. If we 
+hardcoded the questions on the client, we'd have to duplicate that code on both web and mobile versions. 
+If we wanted to rephrase the question, add a question, etc... we would similarly have to add and coordinate it in both 
+these areas, which sounds easy but I know first hand it is a headache.
+
+Instead, by pulling the questions directly from the server, we can change them at any 
+time and keep all clients dumb.
 
 ## Client
 
-TODO: describe approach
+The client is a simple web app with a couple of screens. It uses the following tech:
+
+- React
+- Redux
+- Apollo Client
+- Firebase
 
 ## Server
 
-TODO: describe approach
+The server is node.js w/ typescript and uses clean architecture to loosely couple dependencies 
+and keep the code very modular.
+
+- Express
+- Apollo Server
+- Firebase
+- MongoDB
+
