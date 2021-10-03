@@ -39,6 +39,9 @@ I squeezed this takehome in during the weekend (but had to drive to LA and back 
 If I had more time I would've liked to:
 1) Add concept of Use Cases / Application Services that the surfaces use 
 2) Write a few jest unit tests for the core functionality
+3) Dockerize the server so easier to spin up 
+4) More frontend validation
+5) Better looking UI 
 
 ## Tradeoffs I would make if I had more of a time crunch
 
