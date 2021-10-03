@@ -6,6 +6,9 @@ answer questions about themselves, and share their profile with their friends.
 Product Specs:
 https://docs.google.com/document/d/1X489tP9UUZJ8hncXRbeDZ5BZ6NURqCSoWfTcn99EWFU/edit#heading=h.gxl3ja4odl7w
 
+Walkthrough:
+[TODO: insert a loom here]
+
 --------
 
 # Technology:
@@ -106,6 +109,12 @@ these areas, which sounds easy but I know first hand it is a headache.
 
 Instead, by pulling the questions directly from the server, we can change them at any 
 time and keep all clients dumb.
+
+### Denormalized answers
+
+I embedded the full Q/A on the user after they answer them so there is a track record 
+of the data at the time the user answers it. This is the same concept behind storing a 
+product's name on an order to have a history of the data at the time of the user's action.
 
 --------
 
