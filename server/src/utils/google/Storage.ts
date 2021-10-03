@@ -1,9 +1,8 @@
-import { Storage, Bucket, GetSignedUrlConfig } from "@google-cloud/storage";
+import { Storage, Bucket } from "@google-cloud/storage";
 import { v4 as uuidv4 } from "uuid";
 
 import { config } from "src/config";
-import * as moment from "moment";
-import { failure, FailureOrSuccess, Maybe, success } from "src/core/logic";
+import { Maybe } from "src/core/logic";
 
 const mime = require("mime-types");
 
@@ -77,5 +76,5 @@ export class GoogleStorage {
 }
 
 export const ImageGoogleStorage = new GoogleStorage({
-    bucket: "xby-take-home",
+    bucket: config.google.imageBucket,
 });

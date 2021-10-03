@@ -1,11 +1,12 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useCallback } from "react";
 import { Colors } from "src/components";
-import { Question } from "src/api/graphql/generated/types";
-import QuestionComponent from "./Question";
+import { Question, QuestionType } from "src/api/graphql/generated/types";
+import QuestionComponent from "./Form/Question";
 import { GET_QUESTIONS, ANSWER_QUESTIONS } from "./gql";
-import { Formik } from "formik";
-import yup from "yup";
+import Form from "./Form";
+
+import * as yup from "yup";
 
 function Questions() {
     const {
@@ -14,16 +15,11 @@ function Questions() {
         error: errorQuestions,
     } = useQuery(GET_QUESTIONS);
 
-    const [answer, { data, loading, error }] = useMutation(ANSWER_QUESTIONS);
+    const [answer] = useMutation(ANSWER_QUESTIONS);
 
-    const questions: Question[] = data?.activeQuestions || [];
+    const questions: Question[] = dataQuestions?.activeQuestions || [];
 
-    const buildValidator = useCallback(() => {
-        // TODO: take the questions and generate a mapping for validation
-        return yup.object().shape({
-            // TODO:
-        });
-    }, [questions]);
+    console.log("QUESTIONS: ", questions);
 
     const onSubmit = useCallback(() => {
         answer({
@@ -53,30 +49,7 @@ function Questions() {
             >
                 <h1>Tell us more about you!</h1>
 
-                <Formik
-                    validationSchema={buildValidator}
-                    initialValues={{}}
-                    onSubmit={onSubmit}
-                >
-                    {(props) => {
-                        return (
-                            <div
-                                style={{
-                                    width: "100%",
-                                    margin: "auto",
-                                    textAlign: "left",
-                                }}
-                            >
-                                {questions.map((question) => (
-                                    <QuestionComponent
-                                        question={question}
-                                        key={question.id}
-                                    />
-                                ))}
-                            </div>
-                        );
-                    }}
-                </Formik>
+                <Form questions={questions} />
             </div>
         </div>
     );

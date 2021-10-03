@@ -1,3 +1,4 @@
+import { Field } from "formik";
 import React from "react";
 import { Radio } from "semantic-ui-react";
 import {
@@ -35,7 +36,7 @@ const QuestionInput = ({ question }: { question: Question }) => {
 
     return (
         <div>
-            <Input />
+            <Field name="" component={Input} placeholder="Your answer..." />
         </div>
     );
 };

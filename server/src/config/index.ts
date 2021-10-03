@@ -11,6 +11,7 @@ export const config = {
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL || "",
     },
     google: {
+        imageBucket: process.env.GOOGLE_IMAGE_BUCKET || "xby-take-home",
         projectId: process.env.GOOGLE_PROJECT_ID || "",
         privateKey: parsePrivateKey(process.env.GOOGLE_PRIVATE_KEY),
         clientEmail: process.env.GOOGLE_CLIENT_EMAIL || "",
