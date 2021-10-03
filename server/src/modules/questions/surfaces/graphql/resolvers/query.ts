@@ -1,4 +1,4 @@
-const _resolveMe: Resolvers["Query"]["featureFeed"] = async (
+const _fetchQuestions: Resolvers["Query"]["featureFeed"] = async (
     _parent,
     args,
     ctx
@@ -9,7 +9,6 @@ const _resolveMe: Resolvers["Query"]["featureFeed"] = async (
     return null;
 };
 
-export const userQueryResolver: Resolvers["Query"] = {
-    me: _resolveMe,
-    profile: _resolveMe,
+export const questionQueryResolver: Resolvers["Query"] = {
+    questions: _fetchQuestions,
 };

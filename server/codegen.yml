@@ -5,24 +5,10 @@ config:
         Date: Date
 generates:
     src/core/surfaces/graphql/generated/types.ts:
-        config:
-            contextType: src/core/surfaces/graphql/shield/context#Context
-            mappers:
-                Feature: src/modules/feature/surfaces/graphql/types#FeatureGQLRoot
-                FriendStats: src/modules/user/surfaces/graphql/types#FriendStatsGQLRoot
-                Item: src/modules/purchase/surfaces/graphql/types#ItemGQLRoot
-                Punchcard: src/modules/punchcard/surfaces/graphql/types#PunchcardGQLRoot
-                Product: src/modules/product/surfaces/graphql/types#ProductGQLRoot
-                Promotion: src/modules/promotion/surfaces/graphql/types#PromotionGQLRoot
-                Purchase: src/modules/purchase/surfaces/graphql/types#PurchaseGQLRoot
-                Store: src/modules/store/surfaces/graphql/types#StoreGQLRoot
-                StoreStats: src/modules/store/surfaces/graphql/types#StoreStatsGQLRoot
-                User: src/modules/user/surfaces/graphql/types#UserGQLRoot
+        # config:
+        #     # contextType: src/core/surfaces/graphql/shield/context#Context
+        #     mappers:
+        #         # Feature: src/modules/feature/surfaces/graphql/types#FeatureGQLRoot
         plugins:
             - "typescript"
             - "typescript-resolvers"
-    tests/gql/generated/types.ts:
-        documents: "tests/**/*gql.ts"
-        plugins:
-            - "typescript"
-            - "typescript-operations"

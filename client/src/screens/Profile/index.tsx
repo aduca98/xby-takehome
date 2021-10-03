@@ -17,7 +17,9 @@ function Profile() {
 
 const GET_PROFILE = gql`
     query Profile($username: String!) {
-        questions(username: $username) {
+        name
+        username
+        questions {
             id
             question
             answer

@@ -1,0 +1,4 @@
+extend type Query {
+    me: User
+    userByUsername(username: String!): User
+}

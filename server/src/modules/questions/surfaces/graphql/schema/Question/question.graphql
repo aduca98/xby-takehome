@@ -1,0 +1,9 @@
+enum QuestionType {
+    MultipleChoice
+    ShortAnswer
+}
+
+type Question {
+    title: String!
+    type: QuestionType!
+}

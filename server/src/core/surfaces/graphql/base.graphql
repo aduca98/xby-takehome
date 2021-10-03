@@ -1,0 +1,10 @@
+# General setup, allows extending these types in all the files
+type Query {
+    _empty: String
+}
+
+type Mutation {
+    _empty: String
+}
+
+scalar Date

@@ -1,8 +1,6 @@
 import { Resolvers } from "src/core/surfaces/graphql/generated/types";
-import { featureQueryResolver } from "./featureQueryResolver";
-import { featureResolver } from "./featureResolver";
+import { userQueryResolver } from "./query";
 
-export const featureResolvers: Resolvers = {
-    Query: featureQueryResolver,
-    Feature: featureResolver,
+export const userResolvers: Resolvers = {
+    Query: userQueryResolver,
 };

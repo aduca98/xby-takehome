@@ -22,6 +22,8 @@
     "author": "Andrew Duca",
     "license": "ISC",
     "dependencies": {
+        "@graphql-tools/graphql-file-loader": "^7.1.0",
+        "@graphql-tools/load": "^7.3.2",
         "apollo-server": "^3.3.0",
         "apollo-server-core": "^3.3.0",
         "apollo-server-express": "^3.3.0",

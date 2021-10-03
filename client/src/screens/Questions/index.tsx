@@ -1,8 +1,8 @@
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, gql, useQuery } from "@apollo/client";
 import React from "react";
 
 function Questions() {
-    const [addTodo, { data, loading, error }] = useMutation(ADD_TODO);
+    const { data, loading, error } = useQuery(GET_QUESTIONS);
 
     return (
         <div>
@@ -11,11 +11,12 @@ function Questions() {
     );
 }
 
-const ADD_TODO = gql`
-    mutation AddTodo($text: String!) {
-        addTodo(text: $text) {
+const GET_QUESTIONS = gql`
+    query Profile($username: String!) {
+        questions(username: $username) {
             id
-            text
+            question
+            answer
         }
     }
 `;
