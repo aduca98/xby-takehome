@@ -15,18 +15,30 @@ Walkthrough:
 
 # How to run locally
 
-Client:
+### Client:
+
 ```
 cd ./client
 npm install 
 npm run start
 ```
 
-Server:
+### Server:
+
 ```
 cd ./server
 npm install 
 npm run start:dev
+```
+
+### GraphQL:
+
+You need to generate the graphql types (it writes them to both the client)
+and the server.
+ 
+```
+cd ./server
+npm run graphql:codegen
 ```
 
 You will also need to add a .env file with credentials following the env 
