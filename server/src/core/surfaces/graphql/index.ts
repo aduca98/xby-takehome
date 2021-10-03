@@ -1,12 +1,10 @@
 import { ApolloServer } from "apollo-server-express";
+import { Express } from "express";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import * as http from "http";
-import * as express from "express";
 import { schema } from "./schema";
 
-const app = express();
-
-const startApolloServer = async () => {
+const startApolloServer = async (app: Express) => {
     const httpServer = http.createServer(app);
 
     const server = new ApolloServer({
@@ -21,12 +19,7 @@ const startApolloServer = async () => {
         path: "/graphql",
     });
 
-    // Modified server startup
-    await httpServer.listen({ port: 4000 });
-
-    console.log(
-        `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
-    );
+    return server;
 };
 
 export { startApolloServer };

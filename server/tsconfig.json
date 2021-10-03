@@ -7,17 +7,17 @@
         "noImplicitAny": false,
         "skipLibCheck": true,
         "outDir": "./build",
-        "rootDir": "./src",
+        "rootDir": "../",
         "baseUrl": "./",
-        "types": ["jest"],
         "noImplicitThis": false,
         "strict": true,
         "typeRoots": ["node_modules/@types"],
         "allowSyntheticDefaultImports": false,
         "paths": {
-            "src/*": ["./src/*"]
+            "src/*": ["./src/*"],
+            "shared/*": ["../shared/*"]
         }
     },
     "filesGlob": ["./src/**/*.ts"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "client"]
 }

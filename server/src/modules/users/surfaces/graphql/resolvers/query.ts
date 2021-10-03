@@ -1,25 +1,31 @@
+import { ApolloError } from "apollo-server-errors";
+import { Resolvers, User } from "shared/types";
 import { UserRepository } from "src/modules/users/domain";
+import HttpStatus from "http-status-codes";
 
-const _resolveMe =
-    (userRepo: UserRepository): Resolvers["Query"]["featureFeed"] =>
-    async (_parent, args, ctx) => {
-        const { user: mongooseUser } = ctx;
-        const { lng, lat, logUserId, sessionId, viewId, limit = 100 } = args;
+const _resolveMe = (userRepo: UserRepository) => async (_parent, args, ctx) => {
+    return {} as User;
+};
 
-        return null;
-    };
-
-const _resolveProfile =
-    (userRepo: UserRepository): Resolvers["Query"]["featureFeed"] =>
-    async (_parent, args, ctx) => {
+const _resolveByUsername =
+    (userRepo: UserRepository) => async (_parent, args) => {
         const { username } = args;
 
-        return null;
+        const response = await userRepo.findByUsername(username);
+
+        if (response.isFailure()) {
+            throw new ApolloError(
+                "Failed to load user!",
+                HttpStatus.INTERNAL_SERVER_ERROR.toString()
+            );
+        }
+
+        return response.value;
     };
 
-export const userQueryResolver: Resolvers["Query"] = (
+export const userQueryResolver = (
     userRepo: UserRepository
-) => ({
+): Resolvers["Query"] => ({
     me: _resolveMe(userRepo),
-    profile: _resolveProfile(userRepo),
+    getByUsername: _resolveByUsername(userRepo),
 });

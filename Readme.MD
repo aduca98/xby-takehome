@@ -6,6 +6,8 @@ answer questions about themselves, and share their profile with their friends.
 Product Specs:
 https://docs.google.com/document/d/1X489tP9UUZJ8hncXRbeDZ5BZ6NURqCSoWfTcn99EWFU/edit#heading=h.gxl3ja4odl7w
 
+--------
+
 # Technology:
 
 This stack is typescript across the board. I chose to use React + node.js for a few reasons:
@@ -29,6 +31,21 @@ nosql makes sense and embedding all user information into one document that does
 joins works well. If this was a financial application, I would be more inclined to use 
 a relational DB like postgres for guaranteed ACID transactions.
 
+--------
+
+# Shortcuts I could've made but didn't
+
+TODO: fill this in
+I separated domain types from the db models but starting out to go fast not a huge issue. 
+mapper (ex might be nice to have a nested obj that a postgres is flattened to)
+
+Concept of use cases intstead of passing repos around - there isn't really 
+any complex logic tho so not needed 
+
+Jest unit tests
+
+------
+
 # Dependencies
 
 I chose to use Firebase to handle all the authentication. Firebase makes it easy to plugin 
@@ -37,6 +54,8 @@ rate limiting logins and a bunch of other goodies.
 
 I'd rather use a tried and testing 3rd party, like Firebase (or auth0 but I don't have experience with it),
 than try to roll it myself.
+
+--------
 
 # Design
 
@@ -66,6 +85,8 @@ these areas, which sounds easy but I know first hand it is a headache.
 Instead, by pulling the questions directly from the server, we can change them at any 
 time and keep all clients dumb.
 
+--------
+
 ## Client
 
 The client is a simple web app with a couple of screens. It uses the following tech:
@@ -74,6 +95,8 @@ The client is a simple web app with a couple of screens. It uses the following t
 - Redux
 - Apollo Client
 - Firebase
+
+--------
 
 ## Server
 

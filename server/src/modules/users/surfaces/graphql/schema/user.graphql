@@ -1,0 +1,13 @@
+type UserResponse {
+    question: String!
+    answer: String!
+}
+
+type User {
+    name: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    profileUrl: String
+    responses: [UserResponse]
+}

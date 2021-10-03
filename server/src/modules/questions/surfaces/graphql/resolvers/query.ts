@@ -1,13 +1,23 @@
-import { QUESTIONS } from "src/modules/questions/infra/memory";
+import { ApolloError } from "apollo-server-errors";
+import { Resolvers } from "shared/types";
+import { QuestionRepository } from "src/modules/questions/domain/repos";
+import HttpStatus from "http-status-codes";
 
-const _fetchQuestions: Resolvers["Query"]["featureFeed"] = async (
-    _parent,
-    args,
-    ctx
-) => {
-    return QUESTIONS;
+const _fetchQuestions = (questionRepo: QuestionRepository) => async () => {
+    const response = await questionRepo.findActive();
+
+    if (response.isFailure()) {
+        throw new ApolloError(
+            "Failed to get questions!",
+            HttpStatus.INTERNAL_SERVER_ERROR.toString()
+        );
+    }
+
+    return response.value;
 };
 
-export const questionQueryResolver: Resolvers["Query"] = {
-    questions: _fetchQuestions,
-};
+export const questionQueryResolver = (
+    questionRepo: QuestionRepository
+): Resolvers["Query"] => ({
+    activeQuestions: _fetchQuestions(questionRepo),
+});

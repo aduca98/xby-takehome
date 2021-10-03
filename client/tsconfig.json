@@ -17,10 +17,14 @@
         "jsx": "react-jsx",
         "noImplicitAny": false,
         "outDir": "./build",
-        "rootDir": "./src",
+        "rootDir": "../",
         "baseUrl": "./src",
+        "paths": {
+            "src/*": ["./src/*"],
+            "shared/*": ["../shared/*"]
+        },
         "noFallthroughCasesInSwitch": true
     },
     "include": ["src", "react-app-env.d.ts"],
-    "exclude": ["scripts/**/*.js"]
+    "exclude": ["scripts/**/*.js", "server"]
 }

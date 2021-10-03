@@ -2,9 +2,13 @@ import { success, failure } from "src/core/logic";
 import { UnexpectedError, NotFoundError } from "src/core/logic/errors";
 import { UserRepository, UserResponse, User } from "src/modules/users/domain";
 import { UserModel } from "src/core/infra/mongo/models";
+import { UserMapper } from "./mapper";
 
 export class MongoUserRepository implements UserRepository {
-    constructor(private model: typeof UserModel) {}
+    constructor(
+        private model: typeof UserModel,
+        private mapper: typeof UserMapper
+    ) {}
 
     async findById(userId: string): Promise<UserResponse> {
         try {
@@ -14,7 +18,7 @@ export class MongoUserRepository implements UserRepository {
                 return failure(new NotFoundError("User not found."));
             }
 
-            return success(user);
+            return success(this.mapper.toDomain(user));
         } catch (err) {
             return failure(new UnexpectedError(err));
         }
@@ -30,7 +34,7 @@ export class MongoUserRepository implements UserRepository {
                 return failure(new NotFoundError("User not found."));
             }
 
-            return success(user);
+            return success(this.mapper.toDomain(user));
         } catch (err) {
             return failure(new UnexpectedError(err));
         }
@@ -46,7 +50,7 @@ export class MongoUserRepository implements UserRepository {
                 return failure(new NotFoundError("User not found."));
             }
 
-            return success(user);
+            return success(this.mapper.toDomain(user));
         } catch (err) {
             return failure(new UnexpectedError(err));
         }
@@ -69,7 +73,7 @@ export class MongoUserRepository implements UserRepository {
 
             await user.save();
 
-            return success(this.mapper.toDomain(row));
+            return success(this.mapper.toDomain(user));
         } catch (err) {
             console.error(err);
             return failure(new UnexpectedError(err));
@@ -82,7 +86,7 @@ export class MongoUserRepository implements UserRepository {
 
             await newUser.save();
 
-            return success(newUser);
+            return success(this.mapper.toDomain(newUser));
         } catch (err) {
             return failure(new UnexpectedError(err));
         }

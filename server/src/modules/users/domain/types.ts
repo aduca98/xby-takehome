@@ -4,10 +4,11 @@ export enum AuthProvider {
 
 export type UserAuth = {
     provider: AuthProvider;
-    id: string;
+    providerId: string;
 };
 
 export type User = {
+    id: string;
     name: string;
     firstName: string;
     lastName: string;

@@ -1,0 +1,15 @@
+type CreateUserRequest {
+    name: String!
+    username: String!
+    email: String!
+}
+
+type AnswerQuestionRequest {
+    responses: []
+}
+
+type Mutation {
+    createUser(req: CreateUserRequest!): User!
+    updateMe(req: CreateUserRequest!): User!
+    answerQuestions(req: AnswerQuestionRequest): [Question]!
+}

@@ -9,9 +9,10 @@ type QuestionOption {
     value: String!
 }
 
-type Question {
+type BaseQuestion {
+    id: String!
     title: String!
     type: QuestionType!
-    required: Bool!
+    required: Boolean!
     options: [QuestionOption]
 }
