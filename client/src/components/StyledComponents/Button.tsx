@@ -1,52 +1,61 @@
 import React, { CSSProperties, useState } from "react";
-import { Button as SemanticButton } from "semantic-ui-react";
-import { Colors } from "../";
 
-type Props = {
-    label: string | any;
+type ButtonProps = {
+    label: string | JSX.Element;
+    icon?: any;
+    onClick: any;
     loading?: boolean;
-    disabled?: boolean;
-    onClick: (e: any) => void;
-    style?: CSSProperties;
-    type?: "button" | "submit";
+    timeout?: number;
+    type?: "submit" | "button";
     className?: string;
+    disabled?: boolean;
+    style?: CSSProperties;
 };
 
-export function Button({
-    label,
-    disabled,
-    loading,
-    onClick,
-    style,
+function Button({
     type = "button",
+    loading,
+    style,
+    icon,
+    label,
+    onClick,
+    timeout = 0,
     className,
-}: Props) {
+    disabled = false,
+}: ButtonProps) {
     const [isLoading, setLoading] = useState(false);
 
+    const _onClick = async () => {
+        setLoading(true);
+
+        try {
+            await onClick();
+        } catch (err) {
+        } finally {
+            setTimeout(() => setLoading(false), timeout);
+        }
+    };
+
+    const isDisabled = disabled || isLoading || loading;
+
     return (
-        <SemanticButton
+        <button
             type={type}
-            style={{
-                padding: "15px 20px",
-                fontWeight: 700,
-                fontFamily: "Mulish, serif",
-                fontSize: 18,
-                borderRadius: 5,
-                ...style,
-            }}
-            disabled={disabled || loading}
-            loading={loading || isLoading}
-            className={`go__button ${className || ""}`}
-            onClick={async (e) => {
-                setLoading(true);
-                try {
-                    await onClick(e);
-                } finally {
-                    setLoading(false);
-                }
-            }}
+            onClick={_onClick}
+            disabled={isDisabled}
+            style={style}
+            className={
+                `${
+                    className || ""
+                } inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2` +
+                (isDisabled ? " disabled:opacity-60 cursor-not-allowed" : "") +
+                (isLoading || loading ? " cursor-wait " : "")
+            }
         >
             {label}
-        </SemanticButton>
+            {icon}
+        </button>
     );
 }
+
+export { Button };

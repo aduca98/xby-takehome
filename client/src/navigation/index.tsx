@@ -57,7 +57,7 @@ const Navigation = () => {
                     <Redirect exact path="/" to="/sign-up" />
                     <Route exact component={Signup} path="/sign-up" />
                     <Route exact component={Questions} path="/questions" />
-                    <Route exact component={Profile} path="/p/:username" />
+                    <Route exact component={Profile} path="/u/:username" />
                 </Switch>
             </div>
         </Router>

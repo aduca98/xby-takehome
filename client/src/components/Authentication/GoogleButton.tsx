@@ -36,14 +36,15 @@ export function GoogleButton({ label, onSuccess, onError }: Props) {
                 marginBottom: 10,
                 padding: 15,
                 boxShadow: "none",
-                border: "1px solid #efefef",
+                border: "2px solid #efefef",
                 background: Colors.white,
             }}
             label={
-                <span
+                <div
                     style={{
                         color: Colors.toastedSesame,
                         fontSize: 18,
+                        width: "100%",
                         fontWeight: "bold",
                     }}
                 >
@@ -58,8 +59,10 @@ export function GoogleButton({ label, onSuccess, onError }: Props) {
                         }}
                         src={GoogleLogo}
                     />
-                    {label} with Google
-                </span>
+                    <div style={{ textAlign: "center" }}>
+                        {label} with Google
+                    </div>
+                </div>
             }
         />
     );

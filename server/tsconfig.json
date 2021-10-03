@@ -19,5 +19,6 @@
         }
     },
     "filesGlob": ["./src/**/*.ts"],
-    "exclude": ["node_modules", "client"]
+    "include": ["src", "../shared"],
+    "exclude": ["node_modules"]
 }

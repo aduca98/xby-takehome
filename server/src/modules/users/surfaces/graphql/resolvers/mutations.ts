@@ -1,28 +1,26 @@
 import { ApolloError } from "apollo-server-errors";
-import { Resolvers } from "shared/types";
+import {
+    MutationResolvers,
+    Resolvers,
+} from "src/core/surfaces/graphql/generated/types";
 import { UserRepository } from "src/modules/users/domain";
 import HttpStatus from "http-status-codes";
 
-const _resolveMe = (userRepo: UserRepository) => async (_parent, args, ctx) => {
-    return null;
-};
+const _updateUserResolver =
+    (userRepo: UserRepository): MutationResolvers["updateMe"] =>
+    async (_parent, args, ctx) => {
+        return null as any;
+    };
 
-const _resolveByUsername =
-    (userRepo: UserRepository) => async (_parent, args) => {
-        const { username } = args;
-
-        const response = await userRepo.findByUsername(username);
-
-        if (response.isFailure()) {
-            throw new ApolloError(
-                "Failed to load user!",
-                HttpStatus.INTERNAL_SERVER_ERROR.toString()
-            );
-        }
-
-        return response.value;
+const _createUserResolver =
+    (userRepo: UserRepository): MutationResolvers["createUser"] =>
+    async (_parent) => {
+        return null as any;
     };
 
 export const userMutationResolver = (
     userRepo: UserRepository
-): Resolvers["Mutation"] => ({});
+): Resolvers["Mutation"] => ({
+    updateMe: _updateUserResolver(userRepo),
+    createUser: _createUserResolver(userRepo),
+});

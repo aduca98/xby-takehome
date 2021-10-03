@@ -13,7 +13,9 @@ const _onError = async (error) => {
             FirebaseAuth,
             error.email
         );
+
         errorMessage = "This user already has an account. ";
+
         if (
             methods.indexOf(
                 auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD

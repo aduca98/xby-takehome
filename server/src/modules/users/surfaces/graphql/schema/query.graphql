@@ -1,4 +1,12 @@
-type Query {
+type PublicUser {
+    name: String
+    firstName: String
+    lastName: String
+    profileUrl: String
+    answers: [UserAnswer]
+}
+
+extend type Query {
     me: User!
-    getByUsername: User!
+    getByUsername(username: String!): PublicUser
 }

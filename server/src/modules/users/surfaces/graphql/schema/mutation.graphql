@@ -1,15 +1,31 @@
-type CreateUserRequest {
+enum UserAuthProvider {
+    Firebase
+}
+
+input CreateUserAuthProviderInput {
+    provider: UserAuthProvider!
+    providerId: String
+}
+
+input CreateUserInput {
     name: String!
     username: String!
+    firstName: String!
+    lastName: String!
     email: String!
+    profileUrl: String
+    authProvider: CreateUserAuthProviderInput!
 }
 
-type AnswerQuestionRequest {
-    responses: []
+input UpdateUserInput {
+    name: String
+    username: String
+    firstName: String
+    lastName: String
+    profileUrl: String
 }
 
-type Mutation {
-    createUser(req: CreateUserRequest!): User!
-    updateMe(req: CreateUserRequest!): User!
-    answerQuestions(req: AnswerQuestionRequest): [Question]!
+extend type Mutation {
+    createUser(data: CreateUserInput!): User!
+    updateMe(data: UpdateUserInput!): User!
 }

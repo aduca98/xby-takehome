@@ -1,0 +1,29 @@
+input MultipleChoiceAnswer {
+    optionId: String!
+    label: String!
+    value: String!
+}
+
+input MultipleChoiceInput {
+    questionId: String!
+    question: String!
+    type: String! = "MultipleChoice"
+    answer: MultipleChoiceAnswer!
+}
+
+input ShortAnswerInput {
+    questionId: String!
+    question: String!
+    type: String! = "ShortAnswer"
+    answer: String!
+}
+
+input union AnswerInput = MultipleChoiceInput | ShortAnswerInput
+
+input AnswerQuestionInput {
+    answers: [AnswerInput]!
+}
+
+extend type Mutation {
+    answerQuestions(data: AnswerQuestionInput!): [Question]!
+}

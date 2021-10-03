@@ -1,7 +1,11 @@
 import { ApolloError } from "apollo-server-errors";
-import { Resolvers } from "shared/types";
+import {
+    QueryResolvers,
+    Resolvers,
+} from "src/core/surfaces/graphql/generated/types";
 import { QuestionRepository } from "src/modules/questions/domain/repos";
 import HttpStatus from "http-status-codes";
+import { QuestionGQLRootMapper } from "../mappers/QuestionGQLMapper";
 
 const _fetchQuestions = (questionRepo: QuestionRepository) => async () => {
     const response = await questionRepo.findActive();
@@ -13,11 +17,11 @@ const _fetchQuestions = (questionRepo: QuestionRepository) => async () => {
         );
     }
 
-    return response.value as any[]; // TODO: fix
+    return response.value.map(QuestionGQLRootMapper.toGQLRoot);
 };
 
 export const questionQueryResolver = (
     questionRepo: QuestionRepository
-): Resolvers["Query"] => ({
+): QueryResolvers => ({
     activeQuestions: _fetchQuestions(questionRepo),
 });

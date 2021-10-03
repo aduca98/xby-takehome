@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "target": "es6",
     "types": [
@@ -24,16 +25,17 @@
     "jsx": "react-jsx",
     "noImplicitAny": false,
     "outDir": "./build",
-    "rootDir": "../",
     "baseUrl": "./",
+    "rootDir": "../",
     "noFallthroughCasesInSwitch": true
   },
+  "filesGlob": [
+    "./src/**/*.ts"
+  ],
   "include": [
-    "src",
-    "react-app-env.d.ts"
+    "src"
   ],
   "exclude": [
-    "scripts/**/*.js",
-    "server"
+    "node_modules"
   ]
 }

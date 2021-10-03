@@ -1,16 +1,17 @@
-import { useMutation, gql } from "@apollo/client";
-import React from "react";
+import { noop } from "lodash";
+import { useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Colors, Button } from "../../components";
+import { Colors } from "../../components";
 import { GoogleButton } from "../../components/Authentication";
 import Form from "./Form";
+import { useHistory } from "react-router-dom";
 
 function Signup() {
-    const [addTodo, { data, loading, error }] = useMutation(ADD_TODO);
+    const history = useHistory();
 
-    const onSubmit = async () => {
-        // TODO:
-    };
+    const onSuccess = useCallback(() => {
+        history.push(`/questions`);
+    }, []);
 
     return (
         <div
@@ -62,23 +63,18 @@ function Signup() {
                         textAlign: "left",
                     }}
                 >
-                    <Form onSubmit={onSubmit} />
+                    <Form onSuccess={onSuccess} />
                 </div>
 
-                <GoogleButton label="Sign up" onError={(err) => {}} />
+                <GoogleButton
+                    label="Sign up"
+                    onSuccess={onSuccess}
+                    onError={noop}
+                />
             </div>
         </div>
     );
 }
-
-const ADD_TODO = gql`
-    mutation AddTodo($text: String!) {
-        addTodo(text: $text) {
-            id
-            text
-        }
-    }
-`;
 
 const styles: any = {
     input: {

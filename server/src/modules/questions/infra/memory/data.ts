@@ -15,18 +15,28 @@ export const QUESTIONS: Question[] = [
         options: [
             {
                 id: "option_2_1",
-                label: "",
-                value: "",
+                label: "Java",
+                value: "java",
             },
             {
                 id: "option_2_2",
-                label: "",
-                value: "",
+                label: "Typescript",
+                value: "typescript",
             },
             {
                 id: "option_2_3",
-                label: "",
-                value: "",
+                label: "Python",
+                value: "python",
+            },
+            {
+                id: "option_2_4",
+                label: "Golang",
+                value: "go",
+            },
+            {
+                id: "option_2_5",
+                label: "Rust",
+                value: "rust",
             },
         ],
     },

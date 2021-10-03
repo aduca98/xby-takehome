@@ -1,4 +1,4 @@
-type UserResponse {
+type UserAnswer {
     question: String!
     answer: String!
 }
@@ -9,5 +9,5 @@ type User {
     lastName: String!
     email: String!
     profileUrl: String
-    responses: [UserResponse]
+    answers: [UserAnswer]
 }

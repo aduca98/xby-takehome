@@ -1,20 +1,44 @@
+import { useMutation } from "@apollo/client";
 import { Formik, FormikHelpers, FormikProps } from "formik";
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Input } from "semantic-ui-react";
-import { Button, Colors } from "../../../components";
+import { Button, Colors } from "src/components";
+import { CREATE_USER } from "../gql";
 
 import { INITIAL_USER, UserFormValues, UserValidator } from "./form";
 
 type Props = {
-    onSubmit: (
-        values: UserFormValues,
-        formikActions: FormikHelpers<UserFormValues>
-    ) => void;
+    onSuccess: () => void;
 };
 
-const Form = ({ onSubmit }: Props) => {
+const Form = ({ onSuccess }: Props) => {
+    const [createUser] = useMutation(CREATE_USER);
+
+    const onSubmit = useCallback(
+        async (
+            values: UserFormValues,
+            helpers: FormikHelpers<UserFormValues>
+        ) => {
+            try {
+                helpers.setSubmitting(true);
+
+                await createUser({
+                    variables: values,
+                });
+
+                onSuccess();
+            } catch (err) {
+                console.error(err);
+                alert(err);
+            } finally {
+                helpers.setSubmitting(false);
+            }
+        },
+        []
+    );
+
     return (
         <Formik
             initialValues={{ ...INITIAL_USER }}
@@ -24,7 +48,7 @@ const Form = ({ onSubmit }: Props) => {
             onSubmit={onSubmit}
         >
             {(formProps: FormikProps<UserFormValues>) => {
-                const { handleChange, errors, submitCount, status } = formProps;
+                const { handleChange } = formProps;
 
                 return (
                     <div>
@@ -70,9 +94,6 @@ const Form = ({ onSubmit }: Props) => {
                             <Button
                                 loading={formProps.isSubmitting}
                                 onClick={formProps.handleSubmit}
-                                style={{
-                                    width: "100%",
-                                }}
                                 label="Create Account"
                             />
                         </div>
