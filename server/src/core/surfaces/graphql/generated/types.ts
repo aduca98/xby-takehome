@@ -14,6 +14,18 @@ export type Scalars = {
   Date: any;
 };
 
+export type AnswerInput = {
+  answer?: Maybe<Scalars['String']>;
+  option?: Maybe<QuestionOption>;
+  question: Scalars['String'];
+  questionId: Scalars['String'];
+  type: QuestionType;
+};
+
+export type AnswerQuestionInput = {
+  answers: Array<Maybe<AnswerInput>>;
+};
+
 export type CreateUserAuthProviderInput = {
   provider: UserAuthProvider;
   providerId?: Maybe<Scalars['String']>;
@@ -41,21 +53,40 @@ export enum ErrorCode {
   UnknownError = 'UNKNOWN_ERROR'
 }
 
+export type MultipleChoiceAnswer = {
+  label: Scalars['String'];
+  optionId: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type MultipleChoiceInput = {
+  answer: MultipleChoiceAnswer;
+  question: Scalars['String'];
+  questionId: Scalars['String'];
+  type?: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  answerQuestions: Array<Maybe<Question>>;
   createUser: User;
   updateMe: User;
 };
 
 
+export type MutationAnswerQuestionsArgs = {
+  data: AnswerQuestionInput;
+};
+
+
 export type MutationCreateUserArgs = {
-  req: CreateUserInput;
+  data: CreateUserInput;
 };
 
 
 export type MutationUpdateMeArgs = {
-  req: UpdateUserInput;
+  data: UpdateUserInput;
 };
 
 export type PublicUser = {
@@ -198,12 +229,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AnswerInput: AnswerInput;
+  AnswerQuestionInput: AnswerQuestionInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateUserAuthProviderInput: CreateUserAuthProviderInput;
   CreateUserInput: CreateUserInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Error: never;
   ErrorCode: ErrorCode;
+  MultipleChoiceAnswer: MultipleChoiceAnswer;
+  MultipleChoiceInput: MultipleChoiceInput;
   Mutation: ResolverTypeWrapper<{}>;
   PublicUser: ResolverTypeWrapper<PublicUser>;
   Query: ResolverTypeWrapper<{}>;
@@ -219,11 +254,15 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AnswerInput: AnswerInput;
+  AnswerQuestionInput: AnswerQuestionInput;
   Boolean: Scalars['Boolean'];
   CreateUserAuthProviderInput: CreateUserAuthProviderInput;
   CreateUserInput: CreateUserInput;
   Date: Scalars['Date'];
   Error: never;
+  MultipleChoiceAnswer: MultipleChoiceAnswer;
+  MultipleChoiceInput: MultipleChoiceInput;
   Mutation: {};
   PublicUser: PublicUser;
   Query: {};
@@ -247,8 +286,9 @@ export type ErrorResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'req'>>;
-  updateMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateMeArgs, 'req'>>;
+  answerQuestions?: Resolver<Array<Maybe<ResolversTypes['Question']>>, ParentType, ContextType, RequireFields<MutationAnswerQuestionsArgs, 'data'>>;
+  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'data'>>;
+  updateMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateMeArgs, 'data'>>;
 };
 
 export type PublicUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['PublicUser'] = ResolversParentTypes['PublicUser']> = {

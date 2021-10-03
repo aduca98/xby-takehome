@@ -11,14 +11,13 @@ input MultipleChoiceInput {
     answer: MultipleChoiceAnswer!
 }
 
-input ShortAnswerInput {
+input AnswerInput {
     questionId: String!
     question: String!
-    type: String! = "ShortAnswer"
-    answer: String!
+    type: QuestionType!
+    answer: String
+    option: QuestionOption
 }
-
-input union AnswerInput = MultipleChoiceInput | ShortAnswerInput
 
 input AnswerQuestionInput {
     answers: [AnswerInput]!
