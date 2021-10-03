@@ -6,7 +6,7 @@
     "scripts": {
         "install:all": "yarn install --frozen-lockfile --prod=false",
         "build": "rm -rf build && ./node_modules/.bin/tsc",
-        "start": "node  -r ./prod-paths.js --optimize_for_size --trace-warnings build/app.js",
+        "start": "node  -r ./prod-paths.js --optimize_for_size --trace-warnings build/main.js",
         "start:dev": "./node_modules/nodemon/bin/nodemon.js --config nodemon.json",
         "start:prod": "pm2-runtime start ecosystem.config.js --env production",
         "/////": "graphql setup",

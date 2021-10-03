@@ -45,6 +45,7 @@ If I had more time I would've liked to:
 3) Dockerize the server so easier to spin up 
 4) More frontend validation
 5) Better looking UI 
+6) Lock down mongo auth. Don't have username + password for mongo the only protection is that it is the same VPC
 
 ## Tradeoffs I would make if I had more of a time crunch
 
