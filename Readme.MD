@@ -28,21 +28,25 @@ built in field level permissions, built in type generation, and more.
 
 I chose MongoDB because I similarly have a lot of experience with it, and for this use case 
 nosql makes sense and embedding all user information into one document that doesn't need any 
-joins works well. If this was a financial application, I would be more inclined to use 
-a relational DB like postgres for guaranteed ACID transactions.
+joins works well.
 
 --------
 
-# Shortcuts I could've made but didn't
+## Things I wish I had time to do
 
-TODO: fill this in
-I separated domain types from the db models but starting out to go fast not a huge issue. 
-mapper (ex might be nice to have a nested obj that a postgres is flattened to)
+I squeezed this takehome in during the weekend (but had to drive to LA and back so didn't get a ton of time).
 
-Concept of use cases intstead of passing repos around - there isn't really 
-any complex logic tho so not needed 
+If I had more time I would've liked to:
+1) Add concept of Use Cases / Application Services that the surfaces use 
+2) Write a few jest unit tests for the core functionality
 
-Jest unit tests
+## Tradeoffs I would make if I had more of a time crunch
+
+Clean code is great, but when you are a small startup you need to prioritize speed before PMF. 
+I wrote an implementation that was clean here, but I would purposefully make tradeoffs if I was writing 
+this in a time crunch, such as throwing away domain types/mappers, only supporting a single surface (likely express), 
+and likely some more. There is overhead to the clean architecture approach and writing code this way, 
+much of which isn't worth it until post PMF.
 
 ------
 
@@ -52,17 +56,18 @@ I chose to use Firebase to handle all the authentication. Firebase makes it easy
 social logins, and also handles all of the JWT signing/verifying/revoking in addition to 
 rate limiting logins and a bunch of other goodies.
 
-I'd rather use a tried and testing 3rd party, like Firebase (or auth0 but I don't have experience with it),
+I'd rather use a tried and tested 3rd party, like Firebase (or auth0 but I don't have experience with it),
 than try to roll it myself.
 
 --------
 
 # Design
 
-For the design, happy to walk through the code in person but overall there are two main discussion areas: 
+For the design, happy to walk through the code in person but overall there are two discussion areas that I want to elaborate on: 
 the db model and the question service.
 
-## DB Model
+### DB Model
+
 The data model design really only involves one model: the user. All user profile information 
 is stored on the user document, including their Q/A responses. 
 
@@ -73,7 +78,8 @@ If a user could answer unlimited questions (wasn't capped at 3), I would not emb
 the user document (embedding uncapped arrays in docs is an anti-pattern in mongo), but instead 
 break it out into a separate collection.
 
-## Question Service
+### Question Service
+
 For the question service, I decided to have the client pull the questions from the server for the user to answer. 
 This adds latency to the Q/A screen, but also gives us more flexibility to change the questions.
 
