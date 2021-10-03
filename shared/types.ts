@@ -28,6 +28,7 @@ export type Query = {
 
 export type Question = {
   __typename?: 'Question';
+  id: Scalars['String'];
   options?: Maybe<Array<Maybe<QuestionOption>>>;
   required: Scalars['Boolean'];
   title: Scalars['String'];
@@ -172,6 +173,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type QuestionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   options?: Resolver<Maybe<Array<Maybe<ResolversTypes['QuestionOption']>>>, ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

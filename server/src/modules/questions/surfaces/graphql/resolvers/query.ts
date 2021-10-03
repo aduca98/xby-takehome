@@ -13,7 +13,7 @@ const _fetchQuestions = (questionRepo: QuestionRepository) => async () => {
         );
     }
 
-    return response.value;
+    return response.value as any[]; // TODO: fix
 };
 
 export const questionQueryResolver = (

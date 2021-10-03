@@ -9,7 +9,7 @@ type QuestionOption {
     value: String!
 }
 
-type BaseQuestion {
+type Question {
     id: String!
     title: String!
     type: QuestionType!

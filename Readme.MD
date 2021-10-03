@@ -59,6 +59,19 @@ rate limiting logins and a bunch of other goodies.
 I'd rather use a tried and tested 3rd party, like Firebase (or auth0 but I don't have experience with it),
 than try to roll it myself.
 
+## Dependency Graph 
+
+```
+Data   <->  Domain  <-> Surface
+(repos)   (services)    (graphql)
+```
+
+All services/code use the domain types. The domain types are mapped to data types 
+that are persisted, and then back again (only repos ever interact with data types).
+This is the same on the surface layer as well, where domain types are mapped to the types 
+exposed via a surface (ex. graphql). This keeps all the types separated 
+so you can change domain types without breaking surface contract or persisted data type etc... 
+
 --------
 
 # Design
