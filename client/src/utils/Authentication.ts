@@ -1,38 +1,31 @@
 import { useEffect } from "react";
 import { isMobile } from "react-device-detect";
-import { setUser, setUserLoggedIn } from "src/redux/user";
+import * as FB from "@firebase/auth";
 
-import { Firebase, FirebaseAuth } from "./Firebase";
+import { auth, FirebaseAuth } from "./Firebase";
 
 const _onError = async (error) => {
     console.error(error);
     let errorMessage = error.message;
 
     if (error.code === "auth/account-exists-with-different-credential") {
-        const methods = await FirebaseAuth.fetchSignInMethodsForEmail(
+        const methods = await auth.fetchSignInMethodsForEmail(
+            FirebaseAuth,
             error.email
         );
         errorMessage = "This user already has an account. ";
         if (
             methods.indexOf(
-                FirebaseAuth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD
+                auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD
             ) !== -1
         ) {
             errorMessage +=
                 "Please login with the email and password associated with this account. ";
         }
+
         if (
-            methods.indexOf(
-                firebase.auth.FacebookAuthProvider.FACEBOOK_SIGN_IN_METHOD
-            ) !== -1
-        ) {
-            errorMessage +=
-                "Please login with the Facebook account associated with this account. ";
-        }
-        if (
-            methods.indexOf(
-                firebase.auth.GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD
-            ) !== -1
+            methods.indexOf(auth.GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD) !==
+            -1
         ) {
             errorMessage +=
                 "Please login with the Google account associated with this account. ";
@@ -42,56 +35,37 @@ const _onError = async (error) => {
     return errorMessage;
 };
 
-export const onAuthSuccess = async (
-    result: firebase.auth.UserCredential,
-    params?: any
-) => {
+export const onAuthSuccess = async (firebaseUser: FB.UserCredential | null) => {
     // The signed-in user info.
-    const firebaseUser: firebase.User | null = result.user;
 
     if (!firebaseUser) {
         return null;
     }
 
+    const user = firebaseUser.user;
+
     let firstName = "";
     let lastName = "";
-    if (firebaseUser.displayName) {
-        const name = firebaseUser.displayName.split(" ");
+    if (user.displayName) {
+        const name = user.displayName.split(" ");
         if (name.length >= 1) {
             firstName = name[0];
         }
-        if (name.length === 2) {
-            lastName = name[1];
+        if (name.length >= 2) {
+            lastName = name.slice(1).join(" ");
         }
     }
 
-    const { exists } = await api.users.exists(firebaseUser.uid);
-
-    // Create user if doesn't exist
-    if (!exists) {
-        const { user } = await api.users.create({
-            email: firebaseUser.email,
-            uid: firebaseUser.uid,
-            name: firebaseUser.displayName,
-            firstName: firstName,
-            lastName: lastName,
-            profileUrl: firebaseUser.photoURL,
-            phoneNumber: firebaseUser.phoneNumber,
-            ...params,
-        });
-
-        window.analytics.alias(user.uid);
-        store.dispatch(setUserLoggedIn(true));
-        store.dispatch(setUser(user));
-    } else {
-        const { user } = await api.users.me();
-        store.dispatch(setUserLoggedIn(true));
-        store.dispatch(setUser(user));
-    }
+    return {
+        provider: "firebase",
+        providerId: user.uid,
+        firstName,
+        lastName,
+    };
 };
 
 const listenForFirebaseRedirect = () => {
-    firebase.auth().getRedirectResult().then(onAuthSuccess).catch(_onError);
+    auth.getRedirectResult(FirebaseAuth).then(onAuthSuccess).catch(_onError);
 };
 
 const useFirebaseRedirectListener = () => {
@@ -101,14 +75,13 @@ const useFirebaseRedirectListener = () => {
 };
 
 const thirdPartyAuth =
-    (provider: firebase.auth.AuthProvider) =>
-    async (): Promise<FailureOrSuccess<Error, null>> => {
+    (provider: FB.AuthProvider) => async (): Promise<void> => {
         try {
             // Need to use with redirect for mobile else it doesn't work
             // in safari
             const thirdPartyAuthFxn = isMobile
-                ? () => Firebase.auth().signInWithRedirect(provider)
-                : () => Firebase.auth().signInWithPopup(provider);
+                ? () => auth.signInWithRedirect(FirebaseAuth, provider)
+                : () => auth.signInWithPopup(FirebaseAuth, provider);
 
             console.log(thirdPartyAuthFxn);
 
@@ -119,12 +92,10 @@ const thirdPartyAuth =
             if (result) {
                 await onAuthSuccess(result);
             }
-
-            return success(null);
         } catch (err) {
             const errorMessage = await _onError(err);
 
-            return failure(new Error(errorMessage));
+            throw new Error(errorMessage);
         }
     };
 
@@ -148,37 +119,9 @@ export const getLoginErrorMessage = (methods: string[]) => {
     return "Failed to login.";
 };
 
-async function loginWithEmail(
-    email: string,
-    password: string
-): Promise<FailureOrSuccess<Error, firebase.auth.UserCredential>> {
-    const methods = await Firebase.auth().fetchSignInMethodsForEmail(email);
-    const canLoginWithEmail = methods.includes("password");
-
-    if (!canLoginWithEmail) {
-        return failure(new Error(getLoginErrorMessage(methods)));
-    }
-
-    try {
-        const result = await Firebase.auth().signInWithEmailAndPassword(
-            email.trim(),
-            password
-        );
-        await onAuthSuccess(result);
-
-        return success(result);
-    } catch (error) {
-        const errorMessage = await _onError(error);
-        return failure(new Error(errorMessage));
-    }
-}
-
 const Authentication = {
-    loginWithEmail,
     onAuthSuccess,
-    facebook: thirdPartyAuth(new firebase.auth.FacebookAuthProvider()),
-    google: thirdPartyAuth(new firebase.auth.GoogleAuthProvider()),
-    apple: thirdPartyAuth(new firebase.auth.OAuthProvider("apple.com")),
+    google: thirdPartyAuth(new auth.GoogleAuthProvider()),
     listenForFirebaseRedirect,
     useFirebaseRedirectListener,
 };

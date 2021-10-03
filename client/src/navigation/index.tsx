@@ -1,16 +1,16 @@
 import { useCallback, useEffect } from "react";
-import { Route, Router, Switch } from "react-router-dom";
+import { Route, Router, Switch, Redirect } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import { compose } from "lodash/fp";
 
-import { FirebaseAuth } from "../utils";
+import { auth, FirebaseAuth } from "src/utils";
 import { useDispatch } from "react-redux";
-import { fetchMe, logoutUser, setUserAuthStatus } from "redux/user";
+import { fetchMe, logoutUser, setUserAuthStatus } from "src/redux/user";
 
 // Screens
-import Profile from "../screens/Profile";
-import Signup from "../screens/Signup";
-import Questions from "../screens/Questions";
+import Profile from "src/screens/Profile";
+import Signup from "src/screens/Signup";
+import Questions from "src/screens/Questions";
 
 const history = createBrowserHistory();
 
@@ -18,7 +18,7 @@ const Navigation = () => {
     const dispatch = useDispatch();
 
     const _logout = useCallback(async () => {
-        await FirebaseAuth.signOut();
+        await auth.signOut(FirebaseAuth);
         dispatch(logoutUser());
     }, []);
 
@@ -32,7 +32,7 @@ const Navigation = () => {
     useEffect(() => {
         _setUserAuthStatus("NOT_LOADED");
 
-        FirebaseAuth.onAuthStateChanged(async (u) => {
+        auth.onAuthStateChanged(FirebaseAuth, async (u) => {
             if (u) {
                 _setUserAuthStatus("LOGGED_IN");
                 _fetchMe();
@@ -54,6 +54,7 @@ const Navigation = () => {
                             return <div> Logging Out... </div>;
                         }}
                     />
+                    <Redirect exact path="/" to="/sign-up" />
                     <Route exact component={Signup} path="/sign-up" />
                     <Route exact component={Questions} path="/questions" />
                     <Route exact component={Profile} path="/p/:username" />

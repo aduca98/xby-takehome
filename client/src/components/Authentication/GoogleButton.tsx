@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import GoogleLogo from "src/assets/images/google.png";
-import { Button } from "src/components/StyledComponents";
-import { Colors } from "src/utils";
+import { Button, Colors } from "../../components";
 
 import Authentication from "../../utils/Authentication";
 
@@ -17,11 +16,7 @@ export function GoogleButton({ label, onSuccess, onError }: Props) {
     const handle = async () => {
         setLoading(true);
         try {
-            const response = await Authentication.google();
-
-            if (response.isFailure()) {
-                throw response.error;
-            }
+            await Authentication.google();
 
             onSuccess && onSuccess();
         } catch (err) {

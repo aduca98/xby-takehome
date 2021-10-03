@@ -4,13 +4,14 @@
     "private": true,
     "dependencies": {
         "@apollo/client": "^3.4.15",
+        "@firebase/app": "^0.7.2",
+        "@firebase/auth": "^0.18.1",
         "@reduxjs/toolkit": "^1.6.1",
         "@testing-library/jest-dom": "^5.11.4",
         "@testing-library/react": "^11.1.0",
         "@testing-library/user-event": "^12.1.10",
         "@types/jest": "^26.0.15",
         "@types/node": "^12.0.0",
-        "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "axios": "^0.22.0",
         "firebase": "^9.1.1",
@@ -23,7 +24,7 @@
         "react-dom": "^17.0.2",
         "react-redux": "^7.2.5",
         "react-router-dom": "^5.3.0",
-        "react-scripts": "4.0.3",
+        "react-scripts": "^4.0.3",
         "react-select": "^5.0.0",
         "redux": "^4.1.1",
         "reselect": "^4.0.0",
@@ -59,6 +60,7 @@
     "devDependencies": {
         "@types/firebase": "^3.2.1",
         "@types/lodash": "^4.14.175",
+        "@types/react": "^17.0.27",
         "@types/react-router-dom": "^5.3.0",
         "@types/redux": "^3.6.0"
     }
