@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/865c79c9-9ba0-4937-82cc-2db4d8a88950/deploy-status)](https://app.netlify.com/sites/infallible-nightingale-3ea7b7/deploys)
+
 ## Overview
 
 Welcome! This project is my crack at creating a product that allows users to create a profile, 
@@ -10,6 +12,25 @@ Walkthrough:
 [TODO: insert a loom here]
 
 --------
+
+# How to run locally
+
+Client:
+```
+cd ./client
+npm install 
+npm run start
+```
+
+Server:
+```
+cd ./server
+npm install 
+npm run start:dev
+```
+
+You will also need to add a .env file with credentials following the env 
+template files.
 
 # Technology:
 
