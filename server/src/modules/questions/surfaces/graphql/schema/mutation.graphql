@@ -11,7 +11,7 @@ input MultipleChoiceInput {
     answer: MultipleChoiceAnswer!
 }
 
-input QuestionOption {
+input QuestionOptionInput {
     optionId: String!
     label: String!
     value: String!
@@ -22,7 +22,7 @@ input AnswerInput {
     question: String!
     type: QuestionType!
     answer: String
-    option: QuestionOption
+    option: QuestionOptionInput
 }
 
 input AnswerQuestionInput {
