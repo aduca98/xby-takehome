@@ -1,44 +1,69 @@
-import { useEffect, useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { Question, QuestionType } from "src/api/graphql/generated/types";
 import * as yup from "yup";
 
+export type FormAnswerValue = {
+    question: Question;
+    answer: string | null;
+    option: {
+        id: string;
+        label: string;
+        value: string;
+    } | null;
+};
+
 export type FormValues = {
-    answers: [];
+    answers: FormAnswerValue[];
 };
 
-export const INITIAL_VALUES: FormValues = {
-    answers: [],
-};
-
-const useValidator = (questions: Question[]) => {
+const useForm = (questions: Question[]) => {
     const validationSchema = useMemo(() => {
-        const answerValidators: yup.AnySchema[] = questions.map((q) => {
-            if (q.type === QuestionType.MultipleChoice) {
-                return q.required
-                    ? OPTION_VALIDATION
-                    : OPTION_VALIDATION.nullable();
-            }
-
-            return q.required
-                ? yup.string().required()
-                : yup.string().nullable();
-        });
-
         return yup.object().shape({
-            answers: yup.array(),
+            answers: yup
+                .array()
+                .of(ANSWER_VALIDATION)
+                .length(questions.length)
+                .required(),
         });
     }, [questions]);
 
+    const initialValues: FormValues = useMemo(
+        () => ({
+            answers: questions.map((q) => ({
+                question: q,
+                answer: null,
+                option: null,
+            })),
+        }),
+        [questions]
+    );
+
     return {
-        schema: validationSchema,
+        validationSchema,
+        initialValues,
     };
 };
 
 const OPTION_VALIDATION = yup.object().shape({
-    answer: yup.object().shape({
-        label: yup.string().required(),
-        value: yup.string().required(),
-    }),
+    id: yup.string().required(),
+    label: yup.string().required(),
+    value: yup.string().required(),
 });
 
-export { useValidator };
+const ANSWER_VALIDATION = yup.object().shape({
+    question: yup.mixed(),
+    option: OPTION_VALIDATION.when("type", (type, schema) =>
+        type === QuestionType.MultipleChoice
+            ? schema.required()
+            : schema.nullable()
+    ),
+    answer: yup
+        .string()
+        .when("type", (type, schema) =>
+            type === QuestionType.ShortAnswer
+                ? schema.required()
+                : schema.nullable()
+        ),
+});
+
+export { useForm };

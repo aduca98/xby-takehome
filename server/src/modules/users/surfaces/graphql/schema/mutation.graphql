@@ -36,7 +36,7 @@ input MultipleChoiceInput {
 }
 
 input QuestionOptionInput {
-    optionId: String!
+    id: String!
     label: String!
     value: String!
 }

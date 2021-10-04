@@ -86,11 +86,7 @@ const thirdPartyAuth = (provider: AuthProvider) => async (): Promise<void> => {
             ? () => signInWithRedirect(auth, provider)
             : () => signInWithPopup(auth, provider);
 
-        console.log(thirdPartyAuthFxn);
-
         const result = await thirdPartyAuthFxn();
-
-        console.log(result);
 
         if (result) {
             await onAuthSuccess(result);

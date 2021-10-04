@@ -1,35 +1,58 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import React, { useCallback } from "react";
 import { Button, Colors } from "src/components";
-import { Question, QuestionType } from "src/api/graphql/generated/types";
+import { AnswerInput, Question } from "src/api/graphql/generated/types";
 import QuestionComponent from "./Question";
-import { GET_QUESTIONS, ANSWER_QUESTIONS } from "../gql";
-import { Formik } from "formik";
-import * as yup from "yup";
-import { useValidator, INITIAL_VALUES, FormValues } from "./form";
+import { ANSWER_QUESTIONS } from "../gql";
+import { FieldArray, Formik, FormikHelpers } from "formik";
+import { useForm, FormValues } from "./form";
+import { isEmpty } from "lodash";
+import { useHistory } from "react-router";
 
 function Form({ questions }: { questions: Question[] }) {
     const [answer] = useMutation(ANSWER_QUESTIONS);
+    const history = useHistory();
 
-    const validationSchema = useValidator(questions);
+    const { validationSchema, initialValues } = useForm(questions);
 
-    console.log("QUESTIONS: ", questions);
+    const onSubmit = useCallback(
+        async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
+            helpers.setSubmitting(true);
 
-    const onSubmit = useCallback(() => {
-        answer({
-            // TODO:
-        });
-    }, []);
+            // FIXME: prob don't wanna trust the client for these questions
+            // should move the de-normalization to the server instead
+            try {
+                const answers: AnswerInput[] = values.answers.map((a) => ({
+                    question: a.question.title,
+                    type: a.question.type,
+                    questionId: a.question.id,
+                    answer: a.answer,
+                    option: a.option,
+                }));
+
+                await answer({
+                    variables: { data: { answers } },
+                });
+
+                // TODO: something with the user?
+                history.push(`/u/answer-duca`);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                helpers.setSubmitting(false);
+            }
+        },
+        []
+    );
 
     return (
         <Formik
             validationSchema={validationSchema}
-            initialValues={{ ...INITIAL_VALUES }}
+            initialValues={initialValues}
             onSubmit={onSubmit}
+            enableReinitialize={true}
         >
             {(props) => {
-                console.log(props.values);
-
                 return (
                     <div
                         style={{
@@ -38,12 +61,32 @@ function Form({ questions }: { questions: Question[] }) {
                             textAlign: "left",
                         }}
                     >
-                        {questions.map((question) => (
-                            <QuestionComponent
-                                question={question}
-                                key={question.id}
-                            />
-                        ))}
+                        {props.submitCount > 0 && !isEmpty(props.errors) && (
+                            <div
+                                style={{ color: Colors.melon50 }}
+                                className="font-semibold mb-4"
+                            >
+                                Please answer all questions!
+                            </div>
+                        )}
+
+                        <FieldArray
+                            name="answers"
+                            render={() => (
+                                <div>
+                                    {props.values.answers.map(
+                                        (answer, index) => (
+                                            <QuestionComponent
+                                                formProps={props}
+                                                answer={answer}
+                                                key={index}
+                                                index={index}
+                                            />
+                                        )
+                                    )}
+                                </div>
+                            )}
+                        />
 
                         <div
                             className="pt-4"

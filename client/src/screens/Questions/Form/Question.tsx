@@ -1,5 +1,5 @@
-import { Field } from "formik";
-import React, { useState } from "react";
+import { Field, FormikProps } from "formik";
+import React, { useMemo, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import {
     Question,
@@ -7,8 +7,19 @@ import {
     QuestionType,
 } from "src/api/graphql/generated/types";
 import { Colors, Input } from "src/components";
+import { FormAnswerValue, FormValues } from "./form";
 
-function QuestionComponent({ question }: { question: Question }) {
+function QuestionComponent({
+    answer,
+    index,
+    formProps,
+}: {
+    answer: FormAnswerValue;
+    index: number;
+    formProps: FormikProps<FormValues>;
+}) {
+    const { question } = answer;
+
     return (
         <div className="mb-6">
             <h2 className="font-semibold mb-2">
@@ -18,18 +29,34 @@ function QuestionComponent({ question }: { question: Question }) {
                 )}
             </h2>
 
-            <QuestionInput question={question} />
+            <QuestionInput
+                formProps={formProps}
+                index={index}
+                answer={answer}
+            />
         </div>
     );
 }
 
-const QuestionInput = ({ question }: { question: Question }) => {
-    // TODO:
-    const [selected, setSelected] = useState(null);
+const QuestionInput = ({
+    index,
+    answer,
+    formProps,
+}: {
+    answer: FormAnswerValue;
+    index: number;
+    formProps: FormikProps<FormValues>;
+}) => {
+    const { question } = answer;
 
     if (question.type === QuestionType.MultipleChoice && question.options) {
         return (
-            <RadioGroup value={selected} onChange={setSelected}>
+            <RadioGroup
+                value={answer.option}
+                onChange={(val) =>
+                    formProps.setFieldValue(`answers.${index}.option`, val)
+                }
+            >
                 {question.options.map((option) => (
                     <Option option={option!} key={option!.id} />
                 ))}
@@ -40,9 +67,10 @@ const QuestionInput = ({ question }: { question: Question }) => {
     return (
         <div className="mb-6">
             <Field
-                name=""
+                name={`answers.${index}.answer`}
                 type="textarea"
                 component={Input}
+                rows={4}
                 placeholder="Your answer..."
             />
         </div>
@@ -50,10 +78,23 @@ const QuestionInput = ({ question }: { question: Question }) => {
 };
 
 const Option = ({ option }: { option: QuestionOption }) => {
+    // Note: need to memoize bc value of radio compares against
+    // the pointer of the value of each option (don't love this but don't want)
+    // to spend time looking into it
+    const value = useMemo(
+        () => ({
+            id: option.id,
+            label: option.label,
+            value: option.value,
+        }),
+        [option]
+    );
+
     return (
         <RadioGroup.Option
-            key={option.id}
-            value={option}
+            // Note: need to build the object instead of passing directly
+            // bc option has a __typename property that we don't want to show up
+            value={value}
             className={({ checked }) =>
                 classNames(
                     checked

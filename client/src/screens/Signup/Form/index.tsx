@@ -3,8 +3,14 @@ import { Field, Formik, FormikHelpers, FormikProps } from "formik";
 import React, { Component, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { Button, Input } from "src/components";
+import {
+    CreateUserInput,
+    UserAuthProvider,
+} from "src/api/graphql/generated/types";
+import { Button, Colors, Input } from "src/components";
 import { CREATE_USER } from "../gql";
+import slugify from "slugify";
+import * as shortid from "shortid";
 
 import { INITIAL_USER, UserFormValues, UserValidator } from "./form";
 
@@ -23,8 +29,25 @@ const Form = ({ onSuccess }: Props) => {
             try {
                 helpers.setSubmitting(true);
 
+                const nameParts = values.name.split(" ");
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(" ");
+
+                const data: CreateUserInput = {
+                    ...values,
+                    firstName,
+                    lastName,
+                    username: `${slugify(
+                        values.name
+                    ).toLowerCase()}-${shortid.generate()}`,
+                    authProvider: {
+                        provider: UserAuthProvider.Firebase,
+                        providerId: "1",
+                    },
+                };
+
                 await createUser({
-                    variables: values,
+                    variables: { data },
                 });
 
                 onSuccess();
@@ -47,12 +70,17 @@ const Form = ({ onSuccess }: Props) => {
             onSubmit={onSubmit}
         >
             {(formProps: FormikProps<UserFormValues>) => {
-                const { handleChange } = formProps;
-
-                console.log(formProps.values);
-
                 return (
                     <div>
+                        {formProps.errors && (
+                            <div
+                                style={{ color: Colors.melon50 }}
+                                className="font-semibold mb-4"
+                            >
+                                {Object.values(formProps.errors).join(", ")}
+                            </div>
+                        )}
+
                         <Field
                             component={Input}
                             name="email"

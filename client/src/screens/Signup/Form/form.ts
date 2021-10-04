@@ -17,7 +17,7 @@ export const UserValidator = yup.object().shape({
     name: yup
         .string()
         .nullable()
-        .test("Full name", "Full name is required.", (value: any): boolean => {
+        .test("Full name", "Full name is required", (value: any): boolean => {
             const fullName = (value || "").trim();
             const nameParts = fullName.split(" ");
             return !_.isEmpty(fullName) && 2 <= nameParts.length;
@@ -26,13 +26,13 @@ export const UserValidator = yup.object().shape({
     email: yup
         .string()
         .email()
-        .required("Email is required.")
+        .required("Email is required")
         .nullable()
         .label("Email"),
     password: yup
         .string()
         .min(6)
         .nullable()
-        .required("Password is required.")
+        .required("Password is required")
         .label("Password"),
 });

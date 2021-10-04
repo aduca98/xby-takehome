@@ -50,7 +50,9 @@ function Button({
                 (isLoading || loading ? " cursor-wait " : "")
             }
         >
-            <div className="w-full">{label}</div>
+            <div className="w-full">
+                {isLoading || loading ? "loading..." : label}
+            </div>
         </button>
     );
 }

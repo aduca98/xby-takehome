@@ -145,8 +145,8 @@ export type QuestionOption = {
 };
 
 export type QuestionOptionInput = {
+  id: Scalars['String'];
   label: Scalars['String'];
-  optionId: Scalars['String'];
   value: Scalars['String'];
 };
 
