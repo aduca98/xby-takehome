@@ -11,6 +11,12 @@ input MultipleChoiceInput {
     answer: MultipleChoiceAnswer!
 }
 
+input QuestionOption {
+    optionId: String!
+    label: String!
+    value: String!
+}
+
 input AnswerInput {
     questionId: String!
     question: String!

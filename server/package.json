@@ -17,6 +17,7 @@
     "license": "ISC",
     "dependencies": {
         "@google-cloud/storage": "^5.14.4",
+        "@graphql-inspector/ci": "^3.0.1",
         "@graphql-tools/graphql-file-loader": "^7.1.0",
         "@graphql-tools/load": "^7.3.2",
         "apollo-server": "^3.3.0",
