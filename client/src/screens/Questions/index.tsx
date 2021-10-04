@@ -30,7 +30,7 @@ function Questions() {
     return (
         <div
             style={{
-                background: `linear-gradient(-90deg, ${Colors.parsley80}, ${Colors.matcha80})`,
+                background: `linear-gradient(-90deg, ${Colors.dragonfruit80}, ${Colors.candy80})`,
                 textAlign: "left",
                 padding: "50px 10px",
                 minHeight: "100vh",

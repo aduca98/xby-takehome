@@ -15,7 +15,7 @@ function Profile() {
     return (
         <div
             style={{
-                background: `linear-gradient(-90deg, ${Colors.melon80}, ${Colors.apricot80})`,
+                background: `linear-gradient(-90deg, ${Colors.ube80}, ${Colors.candy80})`,
                 textAlign: "left",
                 padding: "50px 10px",
                 minHeight: "100vh",
@@ -39,16 +39,39 @@ function Profile() {
                         alignItems: "center",
                     }}
                 >
-                    <img
-                        src={""}
-                        alt="Profile"
-                        style={{
-                            backgroundColor: Colors.candy80,
-                            width: 100,
-                            height: 100,
-                            borderRadius: 20,
-                        }}
-                    />
+                    {true ? (
+                        <div
+                            style={{
+                                backgroundColor: Colors.gray90,
+                                width: 100,
+                                height: 100,
+                                borderRadius: 10,
+                                textAlign: "center",
+                                paddingTop: 30,
+                            }}
+                        >
+                            <h3
+                                style={{
+                                    margin: 0,
+                                    fontSize: 30,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                AD
+                            </h3>
+                        </div>
+                    ) : (
+                        <img
+                            src={""}
+                            alt="Profile"
+                            style={{
+                                backgroundColor: Colors.gray90,
+                                width: 100,
+                                height: 100,
+                                borderRadius: 10,
+                            }}
+                        />
+                    )}
 
                     <div style={{ marginLeft: 15 }}>
                         <h1 style={styles.header} className="font-bold">

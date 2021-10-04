@@ -1,13 +1,21 @@
 import { success, failure } from "src/core/logic";
 import { UnexpectedError, NotFoundError } from "src/core/logic/errors";
-import { UserRepository, UserResponse, User } from "src/modules/users/domain";
+import {
+    UserRepository,
+    UserResponse,
+    User,
+    AuthProvider,
+    Answer,
+    AnswerArrayResponse,
+} from "src/modules/users/domain";
 import { UserModel } from "src/core/infra/mongo/models";
-import { UserMapper } from "./mapper";
+import { UserMapper, AnswerMapper } from "./mapper";
 
 export class MongoUserRepository implements UserRepository {
     constructor(
         private model: typeof UserModel,
-        private mapper: typeof UserMapper
+        private mapper: typeof UserMapper,
+        private answerMapper: typeof AnswerMapper
     ) {}
 
     async findById(userId: string): Promise<UserResponse> {
@@ -43,7 +51,7 @@ export class MongoUserRepository implements UserRepository {
     async findByAuthProviderId(authProviderId: string): Promise<UserResponse> {
         try {
             const user = await this.model.findOne({
-                "auth.provider": "",
+                "auth.providerId": authProviderId,
             });
 
             if (!user) {
@@ -55,6 +63,29 @@ export class MongoUserRepository implements UserRepository {
             return failure(new UnexpectedError(err));
         }
     }
+
+    answerQuestions = async (
+        userId: string,
+        answers: Answer[]
+    ): Promise<AnswerArrayResponse> => {
+        try {
+            const user = await this.model.findById(userId);
+
+            if (!user) {
+                return failure(new NotFoundError("User not found."));
+            }
+
+            user.set({
+                answers: answers.map(this.answerMapper.toPersistence),
+            });
+
+            await user.save();
+
+            return success(answers);
+        } catch (err) {
+            return failure(new UnexpectedError(err));
+        }
+    };
 
     async update(
         userId: string,

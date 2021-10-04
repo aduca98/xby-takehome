@@ -1,26 +1,63 @@
 import { LeanDocument } from "mongoose";
-import { UserDocument } from "src/core/infra/mongo/models/User";
-import { User } from "src/modules/users/domain";
+import { UserDocument, AnswerDocument } from "src/core/infra/mongo/models/User";
+import { User, Answer } from "src/modules/users/domain";
 
-const UserMapper = {
-    toDomain: (user: UserDocument): User => ({
-        id: user._id.toString(),
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        name: user.name,
-        username: user.username,
-        auth: user.auth,
+const AnswerMapper = {
+    toDomain: (a: AnswerDocument): Answer => ({
+        questionId: a.questionId,
+        type: a.type,
+        title: a.title,
+        answer: a.answer,
+        option: a.option
+            ? {
+                  optionId: a.option.optionId,
+                  label: a.option.label,
+                  value: a.option.value,
+              }
+            : null,
     }),
-    toPersistence: (user: User): LeanDocument<UserDocument> => ({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        name: user.name,
-        username: user.username,
-        auth: user.auth,
+    toPersistence: (a: Answer): LeanDocument<AnswerDocument> => ({
+        questionId: a.questionId,
+        type: a.type,
+        title: a.title,
+        answer: a.answer,
+        option: a.option
+            ? {
+                  optionId: a.option.optionId,
+                  label: a.option.label,
+                  value: a.option.value,
+              }
+            : null,
     }),
 };
 
-export { UserMapper };
+const UserMapper = {
+    toDomain: (u: UserDocument): User => ({
+        id: u._id.toString(),
+        firstName: u.firstName,
+        lastName: u.lastName,
+        email: u.email,
+        name: u.name,
+        username: u.username,
+        profilePictureUrl: u.profilePictureUrl,
+        auth: u.auth,
+        answers: u.answers.map(AnswerMapper.toDomain),
+        createdAt: u.createdAt,
+        updatedAt: u.updatedAt,
+    }),
+    toPersistence: (u: User): LeanDocument<UserDocument> => ({
+        id: u.id,
+        firstName: u.firstName,
+        lastName: u.lastName,
+        email: u.email,
+        name: u.name,
+        username: u.username,
+        profilePictureUrl: u.profilePictureUrl,
+        auth: u.auth,
+        answers: u.answers.map(AnswerMapper.toPersistence),
+        createdAt: u.createdAt,
+        updatedAt: u.updatedAt,
+    }),
+};
+
+export { UserMapper, AnswerMapper };

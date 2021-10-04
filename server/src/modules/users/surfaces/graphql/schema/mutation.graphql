@@ -13,19 +13,48 @@ input CreateUserInput {
     firstName: String!
     lastName: String!
     email: String!
-    profileUrl: String
+    password: String!
     authProvider: CreateUserAuthProviderInput!
+    profileUrl: String
 }
 
 input UpdateUserInput {
-    name: String
-    username: String
-    firstName: String
-    lastName: String
     profileUrl: String
 }
 
+input MultipleChoiceAnswer {
+    optionId: String!
+    label: String!
+    value: String!
+}
+
+input MultipleChoiceInput {
+    questionId: String!
+    question: String!
+    type: String! = "MultipleChoice"
+    answer: MultipleChoiceAnswer!
+}
+
+input QuestionOptionInput {
+    optionId: String!
+    label: String!
+    value: String!
+}
+
+input AnswerInput {
+    questionId: String!
+    question: String!
+    type: QuestionType!
+    answer: String
+    option: QuestionOptionInput
+}
+
+input AnswerQuestionInput {
+    answers: [AnswerInput!]!
+}
+
 extend type Mutation {
+    answerQuestions(data: AnswerQuestionInput!): [Answer]!
     createUser(data: CreateUserInput!): User!
     updateMe(data: UpdateUserInput!): User!
 }

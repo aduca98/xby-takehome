@@ -3,11 +3,29 @@ type UserAnswer {
     answer: String!
 }
 
+type AnswerOption {
+    optionId: String!
+    value: String!
+    label: String!
+}
+
+type Answer {
+    questionId: String!
+    type: QuestionType!
+    question: String!
+    answer: String
+    option: AnswerOption
+}
+
 type User {
+    id: String!
+    username: String!
     name: String!
     firstName: String!
     lastName: String!
     email: String!
-    profileUrl: String
-    answers: [UserAnswer]
+    createdAt: Date!
+    updatedAt: Date!
+    profilePictureUrl: String
+    answers: [Answer]
 }
