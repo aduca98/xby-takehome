@@ -66,19 +66,62 @@ I chose MongoDB because I similarly have a lot of experience with it, and for th
 nosql makes sense and embedding all user information into one document that doesn't need any 
 joins works well.
 
+On the frontend I used react + redux + apollo client. Good combination of tools that get the job done, 
+and I paired them with tailwindcss so I didn't have to spend as much time styling.
+
+--------
+
+# Design
+
+For the design, happy to walk through the code in person but overall there are two discussion areas that I want to elaborate on: 
+the db model and the question service.
+
+### Data Modeling
+
+The data model design really only involves one model: the user. All user profile information 
+is stored on the user document, including their Q/A responses. 
+
+I did this because 1) I think embedding their responses as part of their profile makes sense 
+and 2) eliminates joins which can get slow. 
+
+If a user could answer unlimited questions (wasn't capped at 3), I would not embed this information on 
+the user document (embedding uncapped arrays in docs is an anti-pattern in mongo), but instead 
+break it out into a separate collection / table if I was to use postgres.
+
+### Dynamic Question Service
+
+For the question service, I decided to have the client pull the questions from the server for the user to answer. 
+This adds latency to the Q/A screen, but also gives us more flexibility to change the questions.
+
+You could imagine adding a mobile application where users could also answer questions from. If we 
+hardcoded the questions on the client, we'd have to duplicate that code on both web and mobile versions. 
+If we wanted to rephrase the question, add a question, etc... we would similarly have to add and coordinate it in both 
+these areas, which sounds easy but I know first hand it is a headache.
+
+Instead, by pulling the questions directly from the server, we can change them at any 
+time and keep all clients dumb.
+
+### Denormalized Answers
+
+I embedded the full Q/A on the user after they answer them so there is a track record 
+of the data at the time the user answers it. This is the same concept behind storing a 
+product's name on an order to have a history of the data at the time of the user's action.
+
 --------
 
 ## Things I wish I had time to do
 
 I squeezed this takehome in during the weekend (but had to drive to LA and back so didn't get a ton of time).
 
-If I had more time I would've liked to:
+If I had more time I would've liked to...
+
 1) Add concept of Use Cases / Application Services that the surfaces use 
 2) Write a few jest unit tests for the core functionality
 3) Dockerize the server so easier to spin up 
-4) More frontend validation
-5) Better looking UI 
-6) Lock down mongo auth. Don't have username + password for mongo the only protection is that it is the same VPC
+4) Better frontend validation/error handling for forms
+5) More unique UI (used a library for all of the styles so kind of generic)
+6) Lock down hosted mongo. Don't have username + password for mongo the only protection is that it is the same VPC
+7) Better server and client error handling (throwing, surfacing, etc...)
 
 ## Tradeoffs I would make if I had more of a time crunch
 
@@ -90,7 +133,7 @@ much of which isn't worth it until post PMF.
 
 ------
 
-# Dependencies
+# 3rd Party Dependencies
 
 I chose to use Firebase to handle all the authentication. Firebase makes it easy to plugin 
 social logins, and also handles all of the JWT signing/verifying/revoking in addition to 
@@ -98,6 +141,19 @@ rate limiting logins and a bunch of other goodies.
 
 I'd rather use a tried and tested 3rd party, like Firebase (or auth0 but I don't have experience with it),
 than try to roll it myself.
+
+I also tailwindcss to get styles on the frontend with minimal work.
+
+Files and profile pictures are stored in a google storage bucket that is fully accessible by 
+the public (this bucket is NOT for storing secure information).
+
+
+### Deployment
+
+The frontend is deployed on Netlify (netlify.com), and the backend on Render (render.com). This way no 
+devops work for me.
+
+-------
 
 ## Dependency Graph 
 
@@ -114,44 +170,6 @@ so you can change domain types without breaking surface contract or persisted da
 
 --------
 
-# Design
-
-For the design, happy to walk through the code in person but overall there are two discussion areas that I want to elaborate on: 
-the db model and the question service.
-
-### DB Model
-
-The data model design really only involves one model: the user. All user profile information 
-is stored on the user document, including their Q/A responses. 
-
-I did this because 1) I think embedding their responses as part of their profile makes sense 
-and 2) eliminates joins which can get slow. 
-
-If a user could answer unlimited questions (wasn't capped at 3), I would not embed this information on 
-the user document (embedding uncapped arrays in docs is an anti-pattern in mongo), but instead 
-break it out into a separate collection.
-
-### Question Service
-
-For the question service, I decided to have the client pull the questions from the server for the user to answer. 
-This adds latency to the Q/A screen, but also gives us more flexibility to change the questions.
-
-You could imagine adding a mobile application where users could also answer questions from. If we 
-hardcoded the questions on the client, we'd have to duplicate that code on both web and mobile versions. 
-If we wanted to rephrase the question, add a question, etc... we would similarly have to add and coordinate it in both 
-these areas, which sounds easy but I know first hand it is a headache.
-
-Instead, by pulling the questions directly from the server, we can change them at any 
-time and keep all clients dumb.
-
-### Denormalized answers
-
-I embedded the full Q/A on the user after they answer them so there is a track record 
-of the data at the time the user answers it. This is the same concept behind storing a 
-product's name on an order to have a history of the data at the time of the user's action.
-
---------
-
 ## Client
 
 The client is a simple web app with a couple of screens. It uses the following tech:
@@ -160,6 +178,8 @@ The client is a simple web app with a couple of screens. It uses the following t
 - Redux
 - Apollo Client
 - Firebase
+
+Hosted on Netlify.
 
 --------
 
@@ -173,3 +193,4 @@ and keep the code very modular.
 - Firebase
 - MongoDB
 
+Hosted on render.com.

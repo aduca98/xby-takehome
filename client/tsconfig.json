@@ -1,28 +1,41 @@
 {
-    "extends": "./tsconfig.paths.json",
-    "compilerOptions": {
-        "target": "es6",
-        "types": ["node", "jest"],
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "jsx": "react-jsx",
-        "noImplicitAny": false,
-        "outDir": "./build",
-        "baseUrl": "./",
-        "rootDir": "../",
-        "noFallthroughCasesInSwitch": true
-    },
-    "filesGlob": ["./src/**/*.ts"],
-    "include": ["src"],
-    "exclude": ["node_modules"]
+  "extends": "./tsconfig.paths.json",
+  "compilerOptions": {
+    "target": "es6",
+    "types": [
+      "node",
+      "jest"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "noImplicitAny": false,
+    "outDir": "./build",
+    "baseUrl": "./",
+    "rootDir": "../",
+    "noFallthroughCasesInSwitch": true
+  },
+  "filesGlob": [
+    "./src/**/*.ts"
+  ],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

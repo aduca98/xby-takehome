@@ -1,15 +1,23 @@
-import * as firebase from "@firebase/app";
-import * as auth from "@firebase/auth";
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
 
-import { config } from "../config";
+import { config } from "src/config";
 
-const Firebase = firebase.initializeApp(config.firebase);
+const Firebase = initializeApp({
+    apiKey: config.firebase.apiKey,
+    appId: config.firebase.appId,
+    measurementId: config.firebase.measurementId,
+    authDomain: config.firebase.authDomain,
+    projectId: config.firebase.projectId,
+    storageBucket: config.firebase.storageBucket,
+    messagingSenderId: config.firebase.messagingSenderId,
+});
 
-const FirebaseAuth = auth.initializeAuth(Firebase);
+const auth = getAuth(Firebase);
 
 async function getAuthToken(): Promise<string | null> {
     return new Promise((resolve, reject) => {
-        const currentUser = auth.getAuth().currentUser;
+        const currentUser = auth.currentUser;
 
         if (currentUser) {
             currentUser
@@ -22,4 +30,4 @@ async function getAuthToken(): Promise<string | null> {
     });
 }
 
-export { Firebase, FirebaseAuth, auth, getAuthToken };
+export { Firebase, auth, getAuthToken };

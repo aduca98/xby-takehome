@@ -1,10 +1,9 @@
 import { useMutation } from "@apollo/client";
-import { Formik, FormikHelpers, FormikProps } from "formik";
+import { Field, Formik, FormikHelpers, FormikProps } from "formik";
 import React, { Component, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { Input } from "semantic-ui-react";
-import { Button, Colors } from "src/components";
+import { Button, Input } from "src/components";
 import { CREATE_USER } from "../gql";
 
 import { INITIAL_USER, UserFormValues, UserValidator } from "./form";
@@ -50,43 +49,42 @@ const Form = ({ onSuccess }: Props) => {
             {(formProps: FormikProps<UserFormValues>) => {
                 const { handleChange } = formProps;
 
+                console.log(formProps.values);
+
                 return (
                     <div>
-                        <Input
-                            required
-                            value={formProps.values.email}
-                            label="Email"
+                        <Field
+                            component={Input}
                             name="email"
                             type="email"
+                            label="Email"
                             autoComplete="email"
-                            placeholder=""
-                            onChange={handleChange}
-                            containerStyle={{ marginBottom: 15 }}
+                            placeholder="yoda@jedi.com"
+                            style={{ marginBottom: 15 }}
                         />
 
-                        <Input
-                            required
-                            value={formProps.values.name}
-                            label="Full name"
+                        <Field
+                            component={Input}
                             name="name"
+                            type="text"
+                            label="Full name"
                             autoComplete="name"
-                            placeholder=""
-                            onChange={handleChange}
-                            containerStyle={{ marginBottom: 15 }}
+                            placeholder="yoda"
+                            style={{ marginBottom: 15 }}
                         />
 
-                        <Input
+                        <Field
+                            component={Input}
                             required
-                            value={formProps.values.password}
                             label="Password"
                             name="password"
                             type="password"
                             placeholder=""
-                            onChange={handleChange}
-                            containerStyle={{ marginBottom: 15 }}
+                            style={{ marginBottom: 15 }}
                         />
 
                         <div
+                            className="pt-4"
                             style={{
                                 margin: "10px 0 20px 0",
                             }}

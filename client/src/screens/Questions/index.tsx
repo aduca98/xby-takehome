@@ -30,24 +30,29 @@ function Questions() {
     return (
         <div
             style={{
-                backgroundColor: Colors.white,
+                background: `linear-gradient(-90deg, ${Colors.parsley80}, ${Colors.matcha80})`,
                 textAlign: "left",
                 padding: "50px 10px",
                 minHeight: "100vh",
             }}
         >
             <div
+                className="shadow-lg"
                 style={{
                     width: "100%",
-                    maxWidth: 500,
+                    maxWidth: 550,
                     borderRadius: 20,
-                    border: "2px solid " + Colors.gray90,
                     margin: "auto",
                     padding: "50px 25px",
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.gray100,
                 }}
             >
-                <h1>Tell us more about you!</h1>
+                <h1 className="font-bold text-2xl">
+                    We want to get to know you and your love of programming a
+                    lil' more!
+                </h1>
+
+                <br />
 
                 <Form questions={questions} />
             </div>

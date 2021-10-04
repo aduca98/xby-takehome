@@ -16,45 +16,31 @@ function Signup() {
     return (
         <div
             style={{
-                backgroundColor: Colors.white,
+                background: `linear-gradient(-90deg, ${Colors.blueberry80}, ${Colors.candy80})`,
                 textAlign: "left",
-                padding: "50px 10px",
+                padding: "100px 10px",
                 minHeight: "100vh",
             }}
         >
             <div
+                className="shadow-lg"
                 style={{
                     width: "100%",
                     maxWidth: 500,
                     borderRadius: 20,
-                    border: "2px solid " + Colors.gray90,
                     margin: "auto",
                     padding: "50px 25px",
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.gray100,
                 }}
             >
-                <h1 style={styles.header}>Create your account</h1>
-                <p
-                    style={{
-                        fontSize: 16,
-                        color: Colors.toastedSesame,
-                        textAlign: "left",
-                        margin: "15px 0",
-                    }}
-                >
-                    or if you already have an account,{" "}
-                    <Link to={`/login${window.location.search}`}>
-                        <span
-                            style={{
-                                cursor: "pointer",
-                                color: Colors.black,
-                                fontWeight: "bold",
-                            }}
-                        >
-                            sign in
-                        </span>
-                    </Link>
+                <h1 className="font-bold text-2xl">Welcome to XBY!</h1>
+
+                <p>
+                    Create your account now, it should only take your 60 seconds
+                    (we promise 😊).
                 </p>
+
+                <br />
 
                 <div
                     style={{
@@ -66,11 +52,13 @@ function Signup() {
                     <Form onSuccess={onSuccess} />
                 </div>
 
-                <GoogleButton
-                    label="Sign up"
-                    onSuccess={onSuccess}
-                    onError={noop}
-                />
+                <div className="mt-8 pt-8 border-t-2 border-gray-200">
+                    <GoogleButton
+                        label="Sign up"
+                        onSuccess={onSuccess}
+                        onError={noop}
+                    />
+                </div>
             </div>
         </div>
     );
@@ -105,8 +93,7 @@ const styles: any = {
         margin: 50,
     },
     header: {
-        fontWeight: 900,
-        fontFamily: "Mulish",
+        fontWeight: "bold",
         textAlign: "left",
         color: Colors.black,
         fontSize: 25,

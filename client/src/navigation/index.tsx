@@ -3,7 +3,7 @@ import { Route, Router, Switch, Redirect } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import { compose } from "lodash/fp";
 
-import { auth, FirebaseAuth } from "src/utils";
+import { auth } from "src/utils";
 import { useDispatch } from "react-redux";
 import { fetchMe, logoutUser, setUserAuthStatus } from "src/redux/user";
 
@@ -11,6 +11,7 @@ import { fetchMe, logoutUser, setUserAuthStatus } from "src/redux/user";
 import Profile from "src/screens/Profile";
 import Signup from "src/screens/Signup";
 import Questions from "src/screens/Questions";
+import { signOut } from "firebase/auth";
 
 const history = createBrowserHistory();
 
@@ -18,7 +19,7 @@ const Navigation = () => {
     const dispatch = useDispatch();
 
     const _logout = useCallback(async () => {
-        await auth.signOut(FirebaseAuth);
+        await signOut(auth);
         dispatch(logoutUser());
     }, []);
 
@@ -32,7 +33,7 @@ const Navigation = () => {
     useEffect(() => {
         _setUserAuthStatus("NOT_LOADED");
 
-        auth.onAuthStateChanged(FirebaseAuth, async (u) => {
+        auth.onAuthStateChanged(async (u) => {
             if (u) {
                 _setUserAuthStatus("LOGGED_IN");
                 _fetchMe();

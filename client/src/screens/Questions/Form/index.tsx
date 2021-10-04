@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useCallback } from "react";
-import { Colors } from "src/components";
+import { Button, Colors } from "src/components";
 import { Question, QuestionType } from "src/api/graphql/generated/types";
 import QuestionComponent from "./Question";
 import { GET_QUESTIONS, ANSWER_QUESTIONS } from "../gql";
@@ -29,6 +29,7 @@ function Form({ questions }: { questions: Question[] }) {
         >
             {(props) => {
                 console.log(props.values);
+
                 return (
                     <div
                         style={{
@@ -43,6 +44,19 @@ function Form({ questions }: { questions: Question[] }) {
                                 key={question.id}
                             />
                         ))}
+
+                        <div
+                            className="pt-4"
+                            style={{
+                                margin: "10px 0 20px 0",
+                            }}
+                        >
+                            <Button
+                                loading={props.isSubmitting}
+                                onClick={props.handleSubmit}
+                                label="Continue"
+                            />
+                        </div>
                     </div>
                 );
             }}

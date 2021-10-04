@@ -2,7 +2,6 @@ import React, { CSSProperties, useState } from "react";
 
 type ButtonProps = {
     label: string | JSX.Element;
-    icon?: any;
     onClick: any;
     loading?: boolean;
     timeout?: number;
@@ -16,7 +15,6 @@ function Button({
     type = "button",
     loading,
     style,
-    icon,
     label,
     onClick,
     timeout = 0,
@@ -47,13 +45,12 @@ function Button({
             className={
                 `${
                     className || ""
-                } inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2` +
+                } bg-indigo-500 align-middle w-full text-center inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2` +
                 (isDisabled ? " disabled:opacity-60 cursor-not-allowed" : "") +
                 (isLoading || loading ? " cursor-wait " : "")
             }
         >
-            {label}
-            {icon}
+            <div className="w-full">{label}</div>
         </button>
     );
 }

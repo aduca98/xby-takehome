@@ -1,34 +1,36 @@
 import { useEffect } from "react";
 import { isMobile } from "react-device-detect";
-import * as FB from "@firebase/auth";
+import {
+    fetchSignInMethodsForEmail,
+    EmailAuthProvider,
+    UserCredential,
+    GoogleAuthProvider,
+    getRedirectResult,
+    signInWithRedirect,
+    signInWithPopup,
+    AuthProvider,
+} from "firebase/auth";
 
-import { auth, FirebaseAuth } from "./Firebase";
+import { auth } from "./Firebase";
 
 const _onError = async (error) => {
     console.error(error);
     let errorMessage = error.message;
 
     if (error.code === "auth/account-exists-with-different-credential") {
-        const methods = await auth.fetchSignInMethodsForEmail(
-            FirebaseAuth,
-            error.email
-        );
+        const methods = await fetchSignInMethodsForEmail(auth, error.email);
 
         errorMessage = "This user already has an account. ";
 
         if (
-            methods.indexOf(
-                auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD
-            ) !== -1
+            methods.indexOf(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD) !==
+            -1
         ) {
             errorMessage +=
                 "Please login with the email and password associated with this account. ";
         }
 
-        if (
-            methods.indexOf(auth.GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD) !==
-            -1
-        ) {
+        if (methods.indexOf(GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD) !== -1) {
             errorMessage +=
                 "Please login with the Google account associated with this account. ";
         }
@@ -37,7 +39,7 @@ const _onError = async (error) => {
     return errorMessage;
 };
 
-export const onAuthSuccess = async (firebaseUser: FB.UserCredential | null) => {
+export const onAuthSuccess = async (firebaseUser: UserCredential | null) => {
     // The signed-in user info.
 
     if (!firebaseUser) {
@@ -67,7 +69,7 @@ export const onAuthSuccess = async (firebaseUser: FB.UserCredential | null) => {
 };
 
 const listenForFirebaseRedirect = () => {
-    auth.getRedirectResult(FirebaseAuth).then(onAuthSuccess).catch(_onError);
+    getRedirectResult(auth).then(onAuthSuccess).catch(_onError);
 };
 
 const useFirebaseRedirectListener = () => {
@@ -76,30 +78,29 @@ const useFirebaseRedirectListener = () => {
     }, []);
 };
 
-const thirdPartyAuth =
-    (provider: FB.AuthProvider) => async (): Promise<void> => {
-        try {
-            // Need to use with redirect for mobile else it doesn't work
-            // in safari
-            const thirdPartyAuthFxn = isMobile
-                ? () => auth.signInWithRedirect(FirebaseAuth, provider)
-                : () => auth.signInWithPopup(FirebaseAuth, provider);
+const thirdPartyAuth = (provider: AuthProvider) => async (): Promise<void> => {
+    try {
+        // Need to use with redirect for mobile else it doesn't work
+        // in safari
+        const thirdPartyAuthFxn = isMobile
+            ? () => signInWithRedirect(auth, provider)
+            : () => signInWithPopup(auth, provider);
 
-            console.log(thirdPartyAuthFxn);
+        console.log(thirdPartyAuthFxn);
 
-            const result = await thirdPartyAuthFxn();
+        const result = await thirdPartyAuthFxn();
 
-            console.log(result);
+        console.log(result);
 
-            if (result) {
-                await onAuthSuccess(result);
-            }
-        } catch (err) {
-            const errorMessage = await _onError(err);
-
-            throw new Error(errorMessage);
+        if (result) {
+            await onAuthSuccess(result);
         }
-    };
+    } catch (err) {
+        const errorMessage = await _onError(err);
+
+        throw new Error(errorMessage);
+    }
+};
 
 export const getLoginErrorMessage = (methods: string[]) => {
     if (!methods.length) {
@@ -123,7 +124,7 @@ export const getLoginErrorMessage = (methods: string[]) => {
 
 const Authentication = {
     onAuthSuccess,
-    google: thirdPartyAuth(new auth.GoogleAuthProvider()),
+    google: thirdPartyAuth(new GoogleAuthProvider()),
     listenForFirebaseRedirect,
     useFirebaseRedirectListener,
 };

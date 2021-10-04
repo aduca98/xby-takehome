@@ -15,18 +15,18 @@ function Profile() {
     return (
         <div
             style={{
-                backgroundColor: Colors.white,
+                background: `linear-gradient(-90deg, ${Colors.melon80}, ${Colors.apricot80})`,
                 textAlign: "left",
                 padding: "50px 10px",
                 minHeight: "100vh",
             }}
         >
             <div
+                className="shadow-lg"
                 style={{
                     width: "100%",
                     maxWidth: 500,
                     borderRadius: 20,
-                    border: "2px solid " + Colors.gray90,
                     margin: "auto",
                     padding: "50px 25px",
                     backgroundColor: Colors.white,
@@ -43,14 +43,17 @@ function Profile() {
                         src={""}
                         alt="Profile"
                         style={{
-                            backgroundColor: "blue",
+                            backgroundColor: Colors.candy80,
                             width: 100,
                             height: 100,
+                            borderRadius: 20,
                         }}
                     />
 
                     <div style={{ marginLeft: 15 }}>
-                        <h1 style={styles.header}>Andrew Duca</h1>
+                        <h1 style={styles.header} className="font-bold">
+                            Andrew Duca
+                        </h1>
                         <span>Joined on July 14th</span>
                     </div>
                 </div>
@@ -59,13 +62,13 @@ function Profile() {
                     style={{
                         width: "100%",
                         margin: "auto",
-                        marginTop: 30,
+                        marginTop: 10,
                         textAlign: "left",
                     }}
                 >
                     {[{}, {}, {}].map((answer) => {
                         return (
-                            <div style={{ marginBottom: 15 }}>
+                            <div className="bg-white py-6 border-b-2">
                                 <h3 style={{ margin: 0 }}>Some Question</h3>
                                 <p>Some answer</p>
                             </div>
@@ -106,8 +109,6 @@ const styles: any = {
         margin: 50,
     },
     header: {
-        fontWeight: 900,
-        fontFamily: "Mulish",
         textAlign: "left",
         color: Colors.black,
         fontSize: 25,
