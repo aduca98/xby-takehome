@@ -6,7 +6,7 @@ const AnswerMapper = {
     toDomain: (a: AnswerDocument): Answer => ({
         questionId: a.questionId,
         type: a.type,
-        title: a.title,
+        question: a.question,
         answer: a.answer,
         option: a.option
             ? {
@@ -19,7 +19,7 @@ const AnswerMapper = {
     toPersistence: (a: Answer): LeanDocument<AnswerDocument> => ({
         questionId: a.questionId,
         type: a.type,
-        title: a.title,
+        question: a.question,
         answer: a.answer,
         option: a.option
             ? {

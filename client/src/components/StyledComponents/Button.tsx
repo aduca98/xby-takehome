@@ -1,4 +1,6 @@
 import React, { CSSProperties, useState } from "react";
+import { BeatLoader } from "react-spinners";
+import { Colors } from "..";
 
 type ButtonProps = {
     label: string | JSX.Element;
@@ -51,7 +53,11 @@ function Button({
             }
         >
             <div className="w-full">
-                {isLoading || loading ? "loading..." : label}
+                {isLoading || loading ? (
+                    <BeatLoader size={8} color={Colors.white} />
+                ) : (
+                    label
+                )}
             </div>
         </button>
     );

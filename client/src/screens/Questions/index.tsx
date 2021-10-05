@@ -9,23 +9,10 @@ import Form from "./Form";
 import * as yup from "yup";
 
 function Questions() {
-    const {
-        data: dataQuestions,
-        loading: loadingQuestions,
-        error: errorQuestions,
-    } = useQuery(GET_QUESTIONS);
-
-    const [answer] = useMutation(ANSWER_QUESTIONS);
+    const { data: dataQuestions, loading: loadingQuestions } =
+        useQuery(GET_QUESTIONS);
 
     const questions: Question[] = dataQuestions?.activeQuestions || [];
-
-    console.log("QUESTIONS: ", questions);
-
-    const onSubmit = useCallback(() => {
-        answer({
-            // TODO:
-        });
-    }, []);
 
     return (
         <div
@@ -54,7 +41,11 @@ function Questions() {
 
                 <br />
 
-                <Form questions={questions} />
+                {loadingQuestions ? (
+                    <div>loading...</div>
+                ) : (
+                    <Form questions={questions} />
+                )}
             </div>
         </div>
     );

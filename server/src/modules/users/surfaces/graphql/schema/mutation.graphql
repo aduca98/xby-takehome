@@ -53,8 +53,13 @@ input AnswerQuestionInput {
     answers: [AnswerInput!]!
 }
 
+type AnswerQuestionResponse {
+    answers: [Answer]!
+    user: User!
+}
+
 extend type Mutation {
-    answerQuestions(data: AnswerQuestionInput!): [Answer]!
+    answerQuestions(data: AnswerQuestionInput!): AnswerQuestionResponse!
     createUser(data: CreateUserInput!): User!
     updateMe(data: UpdateUserInput!): User!
 }

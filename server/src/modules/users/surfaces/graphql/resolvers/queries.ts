@@ -6,17 +6,16 @@ import {
 } from "src/core/surfaces/graphql/generated/types";
 import { UserRepository } from "src/modules/users/domain";
 import HttpStatus from "http-status-codes";
+import { AnswerGQLRootMapper } from "../mappers";
 
-const _resolveMe =
-    (userRepo: UserRepository): QueryResolvers["me"] =>
-    async (_parent, args, ctx) => {
-        return {} as User;
-    };
+const _resolveMe = (): QueryResolvers["me"] => async (_parent, _, ctx) => {
+    return ctx.user;
+};
 
 const _resolveByUsername =
     (userRepo: UserRepository): QueryResolvers["getByUsername"] =>
-    async (_parent, args, ctx) => {
-        const { username } = ctx;
+    async (_parent, args) => {
+        const { username } = args;
 
         const response = await userRepo.findByUsername(username);
 
@@ -27,12 +26,21 @@ const _resolveByUsername =
             );
         }
 
-        return response.value;
+        const user = response.value;
+
+        return {
+            name: user.name,
+            lastName: user.lastName,
+            firstName: user.firstName,
+            profileUrl: user.profilePictureUrl,
+            createdAt: user.createdAt,
+            answers: user.answers.map(AnswerGQLRootMapper.toGQLRoot),
+        };
     };
 
 export const userQueryResolver = (
     userRepo: UserRepository
 ): QueryResolvers => ({
-    me: _resolveMe(userRepo),
+    me: _resolveMe(),
     getByUsername: _resolveByUsername(userRepo),
 });

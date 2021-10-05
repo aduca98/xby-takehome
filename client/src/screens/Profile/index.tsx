@@ -1,16 +1,18 @@
-import React from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Colors } from "src/components";
 import { GET_USER_PROFILE } from "./gql";
 import { useRouteMatch } from "react-router";
+import moment from "moment";
 
 function Profile() {
     const { params } = useRouteMatch<{ username: string }>();
     const username = params.username;
 
-    const { loading, error, data } = useQuery(GET_USER_PROFILE, {
+    const { data } = useQuery(GET_USER_PROFILE, {
         variables: { username },
     });
+
+    const user = data?.getByUsername;
 
     return (
         <div
@@ -39,7 +41,18 @@ function Profile() {
                         alignItems: "center",
                     }}
                 >
-                    {true ? (
+                    {user?.profileUrl ? (
+                        <img
+                            src={user?.profileUrl}
+                            alt="Profile"
+                            style={{
+                                backgroundColor: Colors.gray90,
+                                width: 100,
+                                height: 100,
+                                borderRadius: 10,
+                            }}
+                        />
+                    ) : (
                         <div
                             style={{
                                 backgroundColor: Colors.gray90,
@@ -60,24 +73,15 @@ function Profile() {
                                 AD
                             </h3>
                         </div>
-                    ) : (
-                        <img
-                            src={""}
-                            alt="Profile"
-                            style={{
-                                backgroundColor: Colors.gray90,
-                                width: 100,
-                                height: 100,
-                                borderRadius: 10,
-                            }}
-                        />
                     )}
 
                     <div style={{ marginLeft: 15 }}>
                         <h1 style={styles.header} className="font-bold">
-                            Andrew Duca
+                            {user?.name}
                         </h1>
-                        <span>Joined on July 14th</span>
+                        <span>
+                            Joined on {moment(user?.createdAt).format("MMM Do")}
+                        </span>
                     </div>
                 </div>
 
@@ -89,11 +93,19 @@ function Profile() {
                         textAlign: "left",
                     }}
                 >
-                    {[{}, {}, {}].map((answer) => {
+                    {(user?.answers || []).map((answer) => {
                         return (
                             <div className="bg-white py-6 border-b-2">
-                                <h3 style={{ margin: 0 }}>Some Question</h3>
-                                <p>Some answer</p>
+                                <h3 style={{ margin: 0 }}>{answer.question}</h3>
+
+                                <p
+                                    style={{
+                                        marginTop: 10,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    {answer.answer || answer.option?.label}
+                                </p>
                             </div>
                         );
                     })}

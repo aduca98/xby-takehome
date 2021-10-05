@@ -3,7 +3,7 @@ import {
     MutationResolvers,
     Resolvers,
 } from "src/core/surfaces/graphql/generated/types";
-import { AuthProvider, UserRepository } from "src/modules/users/domain";
+import { Answer, AuthProvider, UserRepository } from "src/modules/users/domain";
 import HttpStatus from "http-status-codes";
 import { Firebase } from "src/utils";
 import { Context } from "src/core/surfaces/graphql/context";
@@ -101,7 +101,22 @@ const _answerQuestionsResolver =
             );
         }
 
-        const answers = args.data.answers.map(AnswerGQLRootMapper.fromGQLRoot);
+        const answers: Answer[] = args.data.answers.map(
+            (a) =>
+                ({
+                    question: a.question,
+                    questionId: a.questionId,
+                    type: a.type,
+                    option: a.option
+                        ? {
+                              optionId: a.option.id,
+                              label: a.option.label,
+                              value: a.option.value,
+                          }
+                        : null,
+                    answer: a.answer || null,
+                } as Answer)
+        );
 
         const response = await userRepo.answerQuestions(ctx.user.id, answers);
 
@@ -112,7 +127,10 @@ const _answerQuestionsResolver =
             );
         }
 
-        return response.value.map(AnswerGQLRootMapper.toGQLRoot);
+        return {
+            answers: response.value.map(AnswerGQLRootMapper.toGQLRoot),
+            user: UserGQLRootMapper.toGQLRoot(ctx.user),
+        };
     };
 
 export const userMutationResolver = (

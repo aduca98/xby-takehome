@@ -1,17 +1,14 @@
 export enum QuestionType {
-    ShortAnswer = "short_answer",
-    MultipleChoice = "multiple_choice",
+    ShortAnswer = "ShortAnswer",
+    MultipleChoice = "MultipleChoice",
 }
 
-export type BaseQuestion = {
+export type Question = {
     id: string;
     type: QuestionType;
     title: string;
     required: boolean;
-};
-
-export type ShortAnswerQuestion = BaseQuestion & {
-    type: QuestionType.ShortAnswer;
+    options: QuestionOption[];
 };
 
 export type QuestionOption = {
@@ -19,10 +16,3 @@ export type QuestionOption = {
     label: string;
     value: string;
 };
-
-export type MultipleChoiceQuestion = BaseQuestion & {
-    type: QuestionType.MultipleChoice;
-    options: QuestionOption[];
-};
-
-export type Question = ShortAnswerQuestion | MultipleChoiceQuestion;

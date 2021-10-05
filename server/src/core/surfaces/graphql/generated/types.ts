@@ -42,6 +42,12 @@ export type AnswerQuestionInput = {
   answers: Array<AnswerInput>;
 };
 
+export type AnswerQuestionResponse = {
+  __typename?: 'AnswerQuestionResponse';
+  answers: Array<Maybe<Answer>>;
+  user: User;
+};
+
 export type CreateUserAuthProviderInput = {
   provider: UserAuthProvider;
   providerId?: Maybe<Scalars['String']>;
@@ -86,7 +92,7 @@ export type MultipleChoiceInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
-  answerQuestions: Array<Maybe<Answer>>;
+  answerQuestions: AnswerQuestionResponse;
   createUser: User;
   updateMe: User;
 };
@@ -108,10 +114,11 @@ export type MutationUpdateMeArgs = {
 
 export type PublicUser = {
   __typename?: 'PublicUser';
-  answers?: Maybe<Array<Maybe<UserAnswer>>>;
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  answers: Array<Answer>;
+  createdAt: Scalars['Date'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  name: Scalars['String'];
   profileUrl?: Maybe<Scalars['String']>;
 };
 
@@ -119,7 +126,7 @@ export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
   activeQuestions: Array<Maybe<Question>>;
-  getByUsername?: Maybe<PublicUser>;
+  getByUsername: PublicUser;
   me: User;
 };
 
@@ -171,12 +178,6 @@ export type User = {
   profilePictureUrl?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Date'];
   username: Scalars['String'];
-};
-
-export type UserAnswer = {
-  __typename?: 'UserAnswer';
-  answer: Scalars['String'];
-  question: Scalars['String'];
 };
 
 export enum UserAuthProvider {
@@ -256,6 +257,7 @@ export type ResolversTypes = {
   AnswerInput: AnswerInput;
   AnswerOption: ResolverTypeWrapper<AnswerOption>;
   AnswerQuestionInput: AnswerQuestionInput;
+  AnswerQuestionResponse: ResolverTypeWrapper<AnswerQuestionResponse>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateUserAuthProviderInput: CreateUserAuthProviderInput;
   CreateUserInput: CreateUserInput;
@@ -274,7 +276,6 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
-  UserAnswer: ResolverTypeWrapper<UserAnswer>;
   UserAuthProvider: UserAuthProvider;
 };
 
@@ -284,6 +285,7 @@ export type ResolversParentTypes = {
   AnswerInput: AnswerInput;
   AnswerOption: AnswerOption;
   AnswerQuestionInput: AnswerQuestionInput;
+  AnswerQuestionResponse: AnswerQuestionResponse;
   Boolean: Scalars['Boolean'];
   CreateUserAuthProviderInput: CreateUserAuthProviderInput;
   CreateUserInput: CreateUserInput;
@@ -300,7 +302,6 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   UpdateUserInput: UpdateUserInput;
   User: User;
-  UserAnswer: UserAnswer;
 };
 
 export type AnswerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Answer'] = ResolversParentTypes['Answer']> = {
@@ -319,6 +320,12 @@ export type AnswerOptionResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type AnswerQuestionResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnswerQuestionResponse'] = ResolversParentTypes['AnswerQuestionResponse']> = {
+  answers?: Resolver<Array<Maybe<ResolversTypes['Answer']>>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
@@ -331,16 +338,17 @@ export type ErrorResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  answerQuestions?: Resolver<Array<Maybe<ResolversTypes['Answer']>>, ParentType, ContextType, RequireFields<MutationAnswerQuestionsArgs, 'data'>>;
+  answerQuestions?: Resolver<ResolversTypes['AnswerQuestionResponse'], ParentType, ContextType, RequireFields<MutationAnswerQuestionsArgs, 'data'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'data'>>;
   updateMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateMeArgs, 'data'>>;
 };
 
 export type PublicUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['PublicUser'] = ResolversParentTypes['PublicUser']> = {
-  answers?: Resolver<Maybe<Array<Maybe<ResolversTypes['UserAnswer']>>>, ParentType, ContextType>;
-  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  answers?: Resolver<Array<ResolversTypes['Answer']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   profileUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -348,7 +356,7 @@ export type PublicUserResolvers<ContextType = any, ParentType extends ResolversP
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   activeQuestions?: Resolver<Array<Maybe<ResolversTypes['Question']>>, ParentType, ContextType>;
-  getByUsername?: Resolver<Maybe<ResolversTypes['PublicUser']>, ParentType, ContextType, RequireFields<QueryGetByUsernameArgs, 'username'>>;
+  getByUsername?: Resolver<ResolversTypes['PublicUser'], ParentType, ContextType, RequireFields<QueryGetByUsernameArgs, 'username'>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 };
 
@@ -382,15 +390,10 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserAnswerResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserAnswer'] = ResolversParentTypes['UserAnswer']> = {
-  answer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type Resolvers<ContextType = any> = {
   Answer?: AnswerResolvers<ContextType>;
   AnswerOption?: AnswerOptionResolvers<ContextType>;
+  AnswerQuestionResponse?: AnswerQuestionResponseResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Error?: ErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -399,6 +402,5 @@ export type Resolvers<ContextType = any> = {
   Question?: QuestionResolvers<ContextType>;
   QuestionOption?: QuestionOptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
-  UserAnswer?: UserAnswerResolvers<ContextType>;
 };
 

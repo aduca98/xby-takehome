@@ -4,10 +4,15 @@ export const GET_USER_PROFILE = gql`
     query UserProfile($username: String!) {
         getByUsername(username: $username) {
             name
-            # createdAt TODO: add this
+            profileUrl
+            createdAt
             answers {
                 question
+                type
                 answer
+                option {
+                    label
+                }
             }
         }
     }

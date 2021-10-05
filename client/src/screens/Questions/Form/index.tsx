@@ -8,6 +8,7 @@ import { FieldArray, Formik, FormikHelpers } from "formik";
 import { useForm, FormValues } from "./form";
 import { isEmpty } from "lodash";
 import { useHistory } from "react-router";
+import { propOr } from "lodash/fp";
 
 function Form({ questions }: { questions: Question[] }) {
     const [answer] = useMutation(ANSWER_QUESTIONS);
@@ -30,14 +31,18 @@ function Form({ questions }: { questions: Question[] }) {
                     option: a.option,
                 }));
 
-                await answer({
+                const response = await answer({
                     variables: { data: { answers } },
                 });
 
-                // TODO: something with the user?
-                history.push(`/u/answer-duca`);
+                const username = response.data.answerQuestions.user?.username;
+
+                console.log(username, response);
+
+                history.push(`/u/${username}`);
             } catch (err) {
                 console.log(err);
+                alert((err as any)?.message);
             } finally {
                 helpers.setSubmitting(false);
             }

@@ -19,13 +19,18 @@ export const GET_QUESTIONS = gql`
 export const ANSWER_QUESTIONS = gql`
     mutation AnswerQuestions($data: AnswerQuestionInput!) {
         answerQuestions(data: $data) {
-            questionId
-            type
-            question
-            answer
-            option {
-                label
-                value
+            answers {
+                questionId
+                type
+                question
+                answer
+                option {
+                    label
+                    value
+                }
+            }
+            user {
+                username
             }
         }
     }

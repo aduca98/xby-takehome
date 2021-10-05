@@ -1,8 +1,3 @@
-type UserAnswer {
-    question: String!
-    answer: String!
-}
-
 type AnswerOption {
     optionId: String!
     value: String!

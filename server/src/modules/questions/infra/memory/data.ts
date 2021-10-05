@@ -6,6 +6,7 @@ export const QUESTIONS: Question[] = [
         title: "How did you get into programming?",
         type: QuestionType.ShortAnswer,
         required: true,
+        options: [],
     },
     {
         id: "question_2",
@@ -45,5 +46,6 @@ export const QUESTIONS: Question[] = [
         title: "What part of software are you most passionate about?",
         type: QuestionType.ShortAnswer,
         required: true,
+        options: [],
     },
 ];

@@ -11,6 +11,8 @@ import { fetchMe, logoutUser, setUserAuthStatus } from "src/redux/user";
 import Profile from "src/screens/Profile";
 import Signup from "src/screens/Signup";
 import Questions from "src/screens/Questions";
+import Login from "src/screens/Login";
+
 import { signOut } from "firebase/auth";
 
 const history = createBrowserHistory();
@@ -57,6 +59,7 @@ const Navigation = () => {
                     />
                     <Redirect exact path="/" to="/sign-up" />
                     <Route exact component={Signup} path="/sign-up" />
+                    <Route exact component={Login} path="/login" />
                     <Route exact component={Questions} path="/questions" />
                     <Route exact component={Profile} path="/u/:username" />
                 </Switch>

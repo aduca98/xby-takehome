@@ -1,63 +1,26 @@
 import { useMutation } from "@apollo/client";
-import { Field, Formik, FormikHelpers, FormikProps } from "formik";
-import React, { Component, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import {
-    CreateUserInput,
-    UserAuthProvider,
-} from "src/api/graphql/generated/types";
-import { Button, Colors, Input } from "src/components";
-import { CREATE_USER } from "../gql";
-import slugify from "slugify";
-import * as shortid from "shortid";
-
-import { INITIAL_USER, UserFormValues, UserValidator } from "./form";
 import { signInWithEmailAndPassword } from "@firebase/auth";
-import { auth } from "src/utils";
+import { Field, Formik, FormikHelpers, FormikProps } from "formik";
+import React, { useCallback } from "react";
+import { Button, Colors, Input } from "src/components";
+import { auth, Firebase } from "src/utils";
+
+import { INITIAL_VALUES, FormValues, Validator } from "./form";
 
 type Props = {
     onSuccess: () => void;
 };
 
 const Form = ({ onSuccess }: Props) => {
-    const [createUser] = useMutation(CREATE_USER);
-
     const onSubmit = useCallback(
-        async (
-            values: UserFormValues,
-            helpers: FormikHelpers<UserFormValues>
-        ) => {
+        async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
             try {
                 helpers.setSubmitting(true);
 
-                const nameParts = values.name.split(" ");
-                const firstName = nameParts[0];
-                const lastName = nameParts.slice(1).join(" ");
-
-                const data: CreateUserInput = {
-                    ...values,
-                    email: values.email.toLowerCase().trim(),
-                    firstName,
-                    lastName,
-                    username: `${slugify(
-                        values.name
-                    ).toLowerCase()}-${shortid.generate()}`,
-                    authProvider: {
-                        provider: UserAuthProvider.Firebase,
-                        providerId: "1",
-                    },
-                };
-
-                await createUser({
-                    variables: { data },
-                });
-
-                // sign in the user with firebase
                 await signInWithEmailAndPassword(
                     auth,
-                    data.email,
-                    data.password
+                    values.email.trim().toLowerCase(),
+                    values.password
                 );
 
                 onSuccess();
@@ -73,13 +36,13 @@ const Form = ({ onSuccess }: Props) => {
 
     return (
         <Formik
-            initialValues={{ ...INITIAL_USER }}
-            validationSchema={UserValidator}
+            initialValues={INITIAL_VALUES}
+            validationSchema={Validator}
             enableReinitialize={true}
             isInitialValid={false}
             onSubmit={onSubmit}
         >
-            {(formProps: FormikProps<UserFormValues>) => {
+            {(formProps: FormikProps<FormValues>) => {
                 return (
                     <div>
                         <Field
@@ -89,16 +52,6 @@ const Form = ({ onSuccess }: Props) => {
                             label="Email"
                             autoComplete="email"
                             placeholder="yoda@jedi.com"
-                            style={{ marginBottom: 15 }}
-                        />
-
-                        <Field
-                            component={Input}
-                            name="name"
-                            type="text"
-                            label="Full name"
-                            autoComplete="name"
-                            placeholder="yoda"
                             style={{ marginBottom: 15 }}
                         />
 
@@ -130,7 +83,7 @@ const Form = ({ onSuccess }: Props) => {
                             <Button
                                 loading={formProps.isSubmitting}
                                 onClick={formProps.handleSubmit}
-                                label="Create Account"
+                                label="Login"
                             />
                         </div>
                     </div>

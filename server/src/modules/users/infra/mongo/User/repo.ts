@@ -75,8 +75,12 @@ export class MongoUserRepository implements UserRepository {
                 return failure(new NotFoundError("User not found."));
             }
 
+            const persistedAnswers = answers.map(
+                this.answerMapper.toPersistence
+            );
+
             user.set({
-                answers: answers.map(this.answerMapper.toPersistence),
+                answers: persistedAnswers,
             });
 
             await user.save();
