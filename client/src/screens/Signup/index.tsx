@@ -5,6 +5,12 @@ import { Colors } from "../../components";
 import { GoogleButton } from "../../components/Authentication";
 import Form from "./Form";
 import { useHistory } from "react-router-dom";
+import { UserCredential } from "@firebase/auth";
+import { CreateUserInput } from "src/api/graphql/generated/types";
+import slugify from "slugify";
+import shortid from "shortid";
+import { useMutation } from "@apollo/client";
+import { CREATE_USER } from "src/api/graphql";
 
 function Signup() {
     const history = useHistory();
@@ -47,16 +53,54 @@ function Signup() {
                 </div>
 
                 <div className="mt-8 pt-8 border-t-2 border-gray-200">
-                    <GoogleButton
-                        label="Sign up"
-                        onSuccess={onSuccess}
-                        onError={noop}
-                    />
+                    <GoogleSignup onSuccess={onSuccess} />
                 </div>
             </div>
         </div>
     );
 }
+
+const GoogleSignup = ({ onSuccess }) => {
+    const [createUser] = useMutation(CREATE_USER);
+
+    const onAuthSuccess = useCallback(
+        async ({ user }: UserCredential): Promise<void> => {
+            try {
+                const nameParts = user.displayName!.split(" ");
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(" ");
+
+                const data: CreateUserInput = {
+                    email: user.email!.toLowerCase().trim(),
+                    name: nameParts.join(" "),
+                    firstName,
+                    lastName,
+                    password: null,
+                    username: `${slugify(
+                        nameParts.join(" ")
+                    ).toLowerCase()}-${shortid.generate()}`,
+                };
+
+                const response = await createUser({
+                    variables: { data },
+                });
+
+                onSuccess();
+            } catch (err) {
+                alert((err as any).message);
+            }
+        },
+        []
+    );
+
+    return (
+        <GoogleButton
+            label="Sign up"
+            onSuccess={onAuthSuccess}
+            onError={noop}
+        />
+    );
+};
 
 const styles: Record<string, CSSProperties> = {
     container: {

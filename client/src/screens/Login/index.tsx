@@ -4,6 +4,9 @@ import { Colors } from "../../components";
 import { GoogleButton } from "../../components/Authentication";
 import Form from "./Form";
 import { Link, useHistory } from "react-router-dom";
+import { UserCredential } from "@firebase/auth";
+import { useDispatch } from "react-redux";
+import { fetchMe } from "src/redux/user";
 
 function Login() {
     const history = useHistory();
@@ -59,15 +62,36 @@ function Login() {
                 </div>
 
                 <div className="mt-8 pt-8 border-t-2 border-gray-200">
-                    <GoogleButton
-                        label="Sign in"
-                        onSuccess={onSuccess}
-                        onError={noop}
-                    />
+                    <GoogleSignin onSuccess={onSuccess} />
                 </div>
             </div>
         </div>
     );
 }
+
+const GoogleSignin = ({ onSuccess }) => {
+    const dispatch = useDispatch();
+
+    const onAuthSuccess = useCallback(
+        async ({ user }: UserCredential): Promise<void> => {
+            try {
+                await dispatch(fetchMe());
+
+                onSuccess();
+            } catch (err) {
+                alert((err as any).message);
+            }
+        },
+        []
+    );
+
+    return (
+        <GoogleButton
+            label="Sign in"
+            onSuccess={onAuthSuccess}
+            onError={noop}
+        />
+    );
+};
 
 export default Login;

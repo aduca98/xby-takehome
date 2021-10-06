@@ -9,7 +9,7 @@ import {
 
 import { auth } from "./Firebase";
 
-type OnSuccess = (fb: UserCredential) => Promise<void>;
+export type OnSuccess = (fb: UserCredential) => Promise<void>;
 
 const _onError = async (error) => {
     console.error(error);

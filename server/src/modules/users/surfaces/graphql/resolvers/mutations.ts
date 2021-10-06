@@ -51,13 +51,6 @@ const _getUserAuth = async (
     user: Maybe<User>,
     params: { name: string; password?: Maybe<string>; email: string }
 ): Promise<UserAuth> => {
-    if (authProvider && user) {
-        throw new ApolloError(
-            "Already logged in with an account!",
-            HttpStatus.BAD_REQUEST.toString()
-        );
-    }
-
     // if there is an auth provider and there is no user,
     // like for google sign in, return the auth provider logged in
     if (authProvider && !user) {
@@ -97,6 +90,12 @@ const _createUserResolver =
             args.data;
 
         const name = `${firstName || ""} ${lastName || ""}`.trim();
+
+        // if there is an auth provider (logged in user)
+        // and they already have an account, just return it
+        if (authProvider && user) {
+            return UserGQLRootMapper.toGQLRoot(user);
+        }
 
         const auth: UserAuth = await _getUserAuth(authProvider, user, {
             name,

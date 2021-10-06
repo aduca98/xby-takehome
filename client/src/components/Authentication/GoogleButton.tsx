@@ -1,64 +1,23 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
-import { UserCredential } from "@firebase/auth";
 import React, { CSSProperties, useCallback, useState } from "react";
-import slugify from "slugify";
-import { CREATE_USER, FETCH_ME } from "src/api/graphql";
-import { CreateUserInput } from "src/api/graphql/generated/types";
 import GoogleLogo from "src/assets/images/google.png";
 import { Button, Colors } from "../../components";
-import shortid from "shortid";
 
-import Authentication from "../../utils/Authentication";
+import Authentication, { OnSuccess } from "../../utils/Authentication";
 
 type Props = {
     label: "Sign in" | "Sign up";
-    onSuccess: () => void;
+    onSuccess: OnSuccess;
     onError: ({ error, message }: any) => void;
 };
 
 export function GoogleButton({ label, onSuccess, onError }: Props) {
     const [isLoading, setLoading] = useState(false);
-    const [createUser, { loading: loadingCreate }] = useMutation(CREATE_USER);
-    const loading = isLoading || loadingCreate;
-
-    const onAuthSuccess = useCallback(
-        async ({ user }: UserCredential): Promise<void> => {
-            console.log(user);
-            try {
-                const nameParts = user.displayName!.split(" ");
-                const firstName = nameParts[0];
-                const lastName = nameParts.slice(1).join(" ");
-
-                const data: CreateUserInput = {
-                    email: user.email!.toLowerCase().trim(),
-                    name: nameParts.join(" "),
-                    firstName,
-                    lastName,
-                    password: null,
-                    username: `${slugify(
-                        nameParts.join(" ")
-                    ).toLowerCase()}-${shortid.generate()}`,
-                };
-
-                const response = await createUser({
-                    variables: { data },
-                });
-
-                console.log(response);
-
-                onSuccess();
-            } catch (err) {
-                alert((err as any).message);
-            }
-        },
-        []
-    );
 
     const handle = useCallback(async () => {
         setLoading(true);
 
         try {
-            await Authentication.google(onAuthSuccess);
+            await Authentication.google(onSuccess);
         } catch (err) {
             onError(err);
         } finally {
@@ -68,7 +27,7 @@ export function GoogleButton({ label, onSuccess, onError }: Props) {
 
     return (
         <Button
-            loading={loading}
+            loading={isLoading}
             onClick={handle}
             style={styles.container}
             type="button"

@@ -10,7 +10,7 @@ node.js, graphql, and react to accomplish this, and is hosted on render.com (bac
 
 #### Video Walkthrough:
 
-https://www.loom.com/share/4c6614871b7f400992b9354dcb5dc8b8
+https://www.loom.com/share/f76de464c17249dab7e2321e75fd5024
 
 #### Project Link:
 
