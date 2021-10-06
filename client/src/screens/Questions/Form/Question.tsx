@@ -1,11 +1,7 @@
 import { Field, FormikProps } from "formik";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { RadioGroup } from "@headlessui/react";
-import {
-    Question,
-    QuestionOption,
-    QuestionType,
-} from "src/api/graphql/generated/types";
+import { QuestionOption, QuestionType } from "src/api/graphql/generated/types";
 import { Colors, Input } from "src/components";
 import { FormAnswerValue, FormValues } from "./form";
 

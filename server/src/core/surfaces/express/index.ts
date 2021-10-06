@@ -3,7 +3,6 @@ import * as express from "express";
 import { startApolloServer } from "../graphql";
 import { Exception } from "src/core/logic";
 import ApiResponse from "src/core/logic/ApiResponse";
-import apiV1 from "./routes";
 import { config } from "src/config";
 import { omit } from "lodash/fp";
 
@@ -16,7 +15,6 @@ const startServer = async () => {
     // http routes
     app.use(express.urlencoded({ extended: true }) as any);
     app.use(express.json() as any);
-    app.use("/v1", apiV1);
     app.use(exceptionHandler);
 
     // gql server

@@ -20,10 +20,38 @@ const history = createBrowserHistory();
 const Navigation = () => {
     const dispatch = useDispatch();
 
-    const _logout = useCallback(async () => {
-        await signOut(auth);
+    const logout = useCallback(() => {
+        void signOut(auth);
         dispatch(logoutUser());
     }, []);
+
+    useAuthListener();
+
+    return (
+        <Router history={history}>
+            <div style={{ height: "100%", width: "100%" }} id="go__container">
+                <Switch>
+                    <Route
+                        exact
+                        path="/logout"
+                        component={() => {
+                            void logout();
+                            return <div> Logging Out... </div>;
+                        }}
+                    />
+                    <Redirect exact path="/" to="/sign-up" />
+                    <Route exact component={Signup} path="/sign-up" />
+                    <Route exact component={Login} path="/login" />
+                    <Route exact component={Questions} path="/questions" />
+                    <Route exact component={Profile} path="/u/:username" />
+                </Switch>
+            </div>
+        </Router>
+    );
+};
+
+const useAuthListener = () => {
+    const dispatch = useDispatch();
 
     const _setUserAuthStatus = useCallback(
         compose(dispatch, setUserAuthStatus),
@@ -44,28 +72,6 @@ const Navigation = () => {
             }
         });
     }, []);
-
-    return (
-        <Router history={history}>
-            <div style={{ height: "100%", width: "100%" }} id="go__container">
-                <Switch>
-                    <Route
-                        exact
-                        path="/logout"
-                        component={() => {
-                            void _logout();
-                            return <div> Logging Out... </div>;
-                        }}
-                    />
-                    <Redirect exact path="/" to="/sign-up" />
-                    <Route exact component={Signup} path="/sign-up" />
-                    <Route exact component={Login} path="/login" />
-                    <Route exact component={Questions} path="/questions" />
-                    <Route exact component={Profile} path="/u/:username" />
-                </Switch>
-            </div>
-        </Router>
-    );
 };
 
 export { Navigation };

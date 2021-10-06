@@ -48,18 +48,12 @@ export type AnswerQuestionResponse = {
   user: User;
 };
 
-export type CreateUserAuthProviderInput = {
-  provider: UserAuthProvider;
-  providerId?: Maybe<Scalars['String']>;
-};
-
 export type CreateUserInput = {
-  authProvider: CreateUserAuthProviderInput;
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   name: Scalars['String'];
-  password: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
   profileUrl?: Maybe<Scalars['String']>;
   username: Scalars['String'];
 };
@@ -259,7 +253,6 @@ export type ResolversTypes = {
   AnswerQuestionInput: AnswerQuestionInput;
   AnswerQuestionResponse: ResolverTypeWrapper<AnswerQuestionResponse>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  CreateUserAuthProviderInput: CreateUserAuthProviderInput;
   CreateUserInput: CreateUserInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Error: never;
@@ -287,7 +280,6 @@ export type ResolversParentTypes = {
   AnswerQuestionInput: AnswerQuestionInput;
   AnswerQuestionResponse: AnswerQuestionResponse;
   Boolean: Scalars['Boolean'];
-  CreateUserAuthProviderInput: CreateUserAuthProviderInput;
   CreateUserInput: CreateUserInput;
   Date: Scalars['Date'];
   Error: never;

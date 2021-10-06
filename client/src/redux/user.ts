@@ -3,6 +3,7 @@ import {
     createAsyncThunk,
     createReducer,
 } from "@reduxjs/toolkit";
+import { client, FETCH_ME } from "src/api/graphql";
 
 type AuthStatus = "NOT_LOADED" | "LOADING" | "LOGGED_IN" | "NOT_LOGGED_IN";
 
@@ -30,13 +31,15 @@ export const setUserAuthStatus = createAction<AuthStatus>(
 export const fetchMe = createAsyncThunk(
     "user/fetchMe",
     async (_, { rejectWithValue }) => {
-        // const response = await api.users.me();
+        try {
+            const response = await client.query({
+                query: FETCH_ME,
+            });
 
-        // if (response.isFailure()) {
-        //     return rejectWithValue(response.error);
-        // }
-
-        return null;
+            return response.data?.me;
+        } catch (err) {
+            return rejectWithValue((err as any).message);
+        }
     }
 );
 
@@ -53,8 +56,7 @@ export const userReducer = createReducer(initialState, (builder) => {
             state.authStatus = action.payload;
         })
         .addCase(fetchMe.fulfilled, (state, action) => {
-            // Add user to the state array
-            // state.user = action.payload.user;
+            state.user = action.payload;
         });
 });
 

@@ -2,13 +2,22 @@
 
 ## Overview
 
-Welcome! This project is my crack at creating a product that allows users to create a profile,
-answer questions about themselves, and share their profile with their friends.
+### tl;dr
 
-Video Walkthrough:
+This project is my crack at creating a product that allows users to create a profile,
+answer questions about themselves, and share their profile with their friends. It uses typescript,
+node.js, graphql, and react to accomplish this, and is hosted on render.com (backend) and netlify (frontend).
+
+#### Video Walkthrough:
+
 https://www.loom.com/share/4c6614871b7f400992b9354dcb5dc8b8
 
-Product Specs:
+#### Project Link:
+
+https://xby-take-home.netlify.app/
+
+#### Product Specs:
+
 https://docs.google.com/document/d/1X489tP9UUZJ8hncXRbeDZ5BZ6NURqCSoWfTcn99EWFU/edit#heading=h.gxl3ja4odl7w
 
 ---
@@ -73,9 +82,6 @@ and I paired them with tailwindcss so I didn't have to spend as much time stylin
 
 # Design
 
-For the design, happy to walk through the code in person but overall there are two discussion areas that I want to elaborate on:
-the db model and the question service.
-
 ### Data Modeling
 
 The data model design really only involves one model: the user. All user profile information
@@ -111,9 +117,7 @@ product's name on an order to have a history of the data at the time of the user
 
 ## Things I wish I had time to do
 
-I squeezed this takehome in during the weekend (but had to drive to LA and back so didn't get a ton of time).
-
-If I had more time I would've liked to...
+In no particular order:
 
 1. Add concept of Use Cases / Application Services that the surfaces use
 2. Write a few jest unit tests for the core functionality
@@ -122,18 +126,14 @@ If I had more time I would've liked to...
 5. More unique UI (used a library for all of the styles so kind of generic)
 6. Lock down hosted mongo. Don't have username + password for mongo the only protection is that it is the same VPC
 7. Better server and client error handling (throwing, surfacing, etc...)
-
-## Tradeoffs I would make if I had more of a time crunch
-
-Clean code is great, but when you are a small startup you need to prioritize speed before PMF.
-I wrote an implementation that was clean here, but I would purposefully make tradeoffs if I was writing
-this in a time crunch, such as throwing away domain types/mappers, only supporting a single surface (likely express),
-and likely some more. There is overhead to the clean architecture approach and writing code this way,
-much of which isn't worth it until post PMF.
+8. Ability to update account information after sign up
+9. Support google auth for mobile (cannot use firebase popups)
 
 ---
 
 # 3rd Party Dependencies
+
+### Firebase Auth + Storage
 
 I chose to use Firebase to handle all the authentication. Firebase makes it easy to plugin
 social logins, and also handles all of the JWT signing/verifying/revoking in addition to
@@ -142,22 +142,25 @@ rate limiting logins and a bunch of other goodies.
 I'd rather use a tried and tested 3rd party, like Firebase (or auth0 but I don't have experience with it),
 than try to roll it myself.
 
-I also tailwindcss to get styles on the frontend with minimal work.
+Profile pictures are stored in firebase storage because it is easiest and I could do it clientside. I might be
+included to just use google storage on the backend if I had more time but this was easiest.
 
-Files and profile pictures are stored in a google storage bucket that is fully accessible by
-the public (this bucket is NOT for storing secure information).
+### Tailwindcss
+
+Free styles that look pretty good. Muddies the react a bit (bc it is css class based), but worth the
+tradeoff IMO given the speed at which can make UI.
 
 ### Deployment
 
 The frontend is deployed on Netlify (netlify.com), and the backend on Render (render.com). This way no
-devops work for me.
+devops work for me (yay).
 
 ---
 
 ## Dependency Graph
 
 ```
-Data   <->  Domain  <-> Surface
+Data   <->  Domain  <->  Surface
 (repos)   (services)    (graphql)
 ```
 
@@ -166,6 +169,10 @@ that are persisted, and then back again (only repos ever interact with data type
 This is the same on the surface layer as well, where domain types are mapped to the types
 exposed via a surface (ex. graphql). This keeps all the types separated
 so you can change domain types without breaking surface contract or persisted data type etc...
+
+If I wanted to code quicker I would probably throw out a lot of the mapping and just keep a domain type
+that the model layer and the presentation (surface) layer uses. But I had some time so migth as well
+decouple them.
 
 ---
 
@@ -177,6 +184,7 @@ The client is a simple web app with a couple of screens. It uses the following t
 - Redux
 - Apollo Client
 - Firebase
+- Tailwindcss
 
 Hosted on Netlify.
 
@@ -191,5 +199,6 @@ and keep the code very modular.
 - Apollo Server
 - Firebase
 - MongoDB
+- GCP (storage)
 
 Hosted on render.com.

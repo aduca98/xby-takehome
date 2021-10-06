@@ -2,19 +2,13 @@ enum UserAuthProvider {
     Firebase
 }
 
-input CreateUserAuthProviderInput {
-    provider: UserAuthProvider!
-    providerId: String
-}
-
 input CreateUserInput {
     name: String!
     username: String!
     firstName: String!
     lastName: String!
     email: String!
-    password: String!
-    authProvider: CreateUserAuthProviderInput!
+    password: String
     profileUrl: String
 }
 

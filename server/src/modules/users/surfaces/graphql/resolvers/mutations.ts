@@ -3,7 +3,13 @@ import {
     MutationResolvers,
     Resolvers,
 } from "src/core/surfaces/graphql/generated/types";
-import { Answer, AuthProvider, UserRepository } from "src/modules/users/domain";
+import {
+    Answer,
+    AuthProvider,
+    User,
+    UserAuth,
+    UserRepository,
+} from "src/modules/users/domain";
 import HttpStatus from "http-status-codes";
 import { Firebase } from "src/utils";
 import { Context } from "src/core/surfaces/graphql/context";
@@ -11,6 +17,7 @@ import { FirebaseProvider } from "src/shared/authorization";
 import { UserGQLRootMapper } from "../mappers/UserGQLMapper";
 import { Types } from "mongoose";
 import { AnswerGQLRootMapper } from "../mappers";
+import { Maybe } from "src/core/logic";
 
 const _updateUserResolver =
     (userRepo: UserRepository): MutationResolvers["updateMe"] =>
@@ -39,26 +46,63 @@ const _updateUserResolver =
         return UserGQLRootMapper.toGQLRoot(response.value);
     };
 
+const _getUserAuth = async (
+    authProvider: Maybe<UserAuth>,
+    user: Maybe<User>,
+    params: { name: string; password?: Maybe<string>; email: string }
+): Promise<UserAuth> => {
+    if (authProvider && user) {
+        throw new ApolloError(
+            "Already logged in with an account!",
+            HttpStatus.BAD_REQUEST.toString()
+        );
+    }
+
+    // if there is an auth provider and there is no user,
+    // like for google sign in, return the auth provider logged in
+    if (authProvider && !user) {
+        return authProvider;
+    }
+
+    if (!params.password) {
+        throw new ApolloError(
+            "Missing password!",
+            HttpStatus.BAD_REQUEST.toString()
+        );
+    }
+
+    const fbUser = await FirebaseProvider.createUser({
+        ...params,
+        password: params.password!,
+    });
+
+    if (fbUser.isFailure()) {
+        throw new ApolloError(
+            fbUser.error.message,
+            HttpStatus.INTERNAL_SERVER_ERROR.toString()
+        );
+    }
+
+    return {
+        provider: AuthProvider.Firebase,
+        providerId: fbUser.value.uid,
+    };
+};
 const _createUserResolver =
     (userRepo: UserRepository): MutationResolvers["createUser"] =>
-    async (_parent, args) => {
+    async (_parent, args, ctx: Context) => {
+        const { user, authProvider } = ctx;
+
         const { email, firstName, lastName, password, profileUrl, username } =
             args.data;
 
         const name = `${firstName || ""} ${lastName || ""}`.trim();
 
-        const fbUser = await FirebaseProvider.createUser({
+        const auth: UserAuth = await _getUserAuth(authProvider, user, {
+            name,
             email,
-            displayName: name,
             password,
         });
-
-        if (fbUser.isFailure()) {
-            throw new ApolloError(
-                fbUser.error.message,
-                HttpStatus.INTERNAL_SERVER_ERROR.toString()
-            );
-        }
 
         const response = await userRepo.create({
             name,
@@ -69,10 +113,7 @@ const _createUserResolver =
             username,
             profilePictureUrl: profileUrl || null,
             answers: [],
-            auth: {
-                provider: AuthProvider.Firebase,
-                providerId: fbUser.value.uid,
-            },
+            auth,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
@@ -80,8 +121,6 @@ const _createUserResolver =
         // if the firebase succeeded but the mongo failed,
         // we should delete the firebase so the user can retry
         if (response.isFailure()) {
-            await FirebaseProvider.deleteUser(fbUser.value.uid);
-
             throw new ApolloError(
                 response.error.message,
                 HttpStatus.INTERNAL_SERVER_ERROR.toString()

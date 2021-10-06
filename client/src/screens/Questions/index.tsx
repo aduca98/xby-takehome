@@ -1,12 +1,9 @@
-import { useMutation, useQuery } from "@apollo/client";
-import React, { useCallback } from "react";
+import { useQuery } from "@apollo/client";
 import { Colors } from "src/components";
-import { Question, QuestionType } from "src/api/graphql/generated/types";
-import QuestionComponent from "./Form/Question";
-import { GET_QUESTIONS, ANSWER_QUESTIONS } from "./gql";
+import { Question } from "src/api/graphql/generated/types";
 import Form from "./Form";
 
-import * as yup from "yup";
+import { GET_QUESTIONS } from "src/api/graphql";
 
 function Questions() {
     const { data: dataQuestions, loading: loadingQuestions } =
@@ -35,14 +32,13 @@ function Questions() {
                 }}
             >
                 <h1 className="font-bold text-2xl">
-                    We want to get to know you and your love of programming a
-                    lil' more!
+                    We want to get to know you more!
                 </h1>
 
                 <br />
 
                 {loadingQuestions ? (
-                    <div>loading...</div>
+                    <div>Loading, give us a second :) ...</div>
                 ) : (
                     <Form questions={questions} />
                 )}

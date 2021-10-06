@@ -1,9 +1,8 @@
-import { useMutation } from "@apollo/client";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { Field, Formik, FormikHelpers, FormikProps } from "formik";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { Button, Colors, Input } from "src/components";
-import { auth, Firebase } from "src/utils";
+import { auth } from "src/utils";
 
 import { INITIAL_VALUES, FormValues, Validator } from "./form";
 

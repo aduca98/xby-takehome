@@ -1,10 +1,16 @@
-import { User, UserRepository } from "src/modules/users/domain";
+import {
+    AuthProvider,
+    User,
+    UserAuth,
+    UserRepository,
+} from "src/modules/users/domain";
 import { Maybe } from "src/core/logic";
 import { propOr } from "lodash/fp";
 import { FirebaseProvider } from "src/shared/authorization";
 
 export type Context = {
     user: Maybe<User>;
+    authProvider: Maybe<UserAuth>;
     errorType: Maybe<string>;
     isAuthorized: boolean;
     message: Maybe<string>;
@@ -18,6 +24,7 @@ const createContext =
         if (!authorization) {
             return {
                 user: null,
+                authProvider: null,
                 errorType: "Unauthorized",
                 isAuthorized: false,
                 message: "Missing authorization header.",
@@ -29,6 +36,7 @@ const createContext =
         if (authParts.length !== 2) {
             return {
                 user: null,
+                authProvider: null,
                 errorType: "Unauthorized",
                 isAuthorized: false,
                 message: "Invalid authorization header.",
@@ -43,11 +51,17 @@ const createContext =
             if (firebaseResponse.isFailure()) {
                 return {
                     errorType: "Forbidden",
+                    authProvider: null,
                     isAuthorized: false,
                     user: null,
                     message: firebaseResponse.error.message,
                 };
             }
+
+            const authProvider = {
+                provider: AuthProvider.Firebase,
+                providerId: firebaseResponse.value.uid,
+            };
 
             const decodedToken = firebaseResponse.value;
 
@@ -58,6 +72,7 @@ const createContext =
             if (response.isFailure()) {
                 return {
                     errorType: "Forbidden",
+                    authProvider,
                     isAuthorized: false,
                     user: null,
                     message: "No user with this uid.",
@@ -66,6 +81,7 @@ const createContext =
 
             return {
                 errorType: null,
+                authProvider,
                 isAuthorized: true,
                 user: response.value,
                 message: null,
@@ -73,6 +89,7 @@ const createContext =
         } catch (err) {
             return {
                 errorType: "Forbidden",
+                authProvider: null,
                 isAuthorized: false,
                 user: null,
                 message: propOr("Authorization failed.", "message", err),

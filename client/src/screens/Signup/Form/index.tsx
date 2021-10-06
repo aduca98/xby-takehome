@@ -1,14 +1,9 @@
 import { useMutation } from "@apollo/client";
 import { Field, Formik, FormikHelpers, FormikProps } from "formik";
-import React, { Component, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import {
-    CreateUserInput,
-    UserAuthProvider,
-} from "src/api/graphql/generated/types";
+import { useCallback } from "react";
+import { CreateUserInput } from "src/api/graphql/generated/types";
 import { Button, Colors, Input } from "src/components";
-import { CREATE_USER } from "../gql";
+import { CREATE_USER } from "src/api/graphql";
 import slugify from "slugify";
 import * as shortid from "shortid";
 
@@ -43,21 +38,16 @@ const Form = ({ onSuccess }: Props) => {
                     username: `${slugify(
                         values.name
                     ).toLowerCase()}-${shortid.generate()}`,
-                    authProvider: {
-                        provider: UserAuthProvider.Firebase,
-                        providerId: "1",
-                    },
                 };
 
                 await createUser({
                     variables: { data },
                 });
 
-                // sign in the user with firebase
                 await signInWithEmailAndPassword(
                     auth,
                     data.email,
-                    data.password
+                    data.password!
                 );
 
                 onSuccess();

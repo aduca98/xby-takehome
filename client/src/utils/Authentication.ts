@@ -1,17 +1,15 @@
-import { useEffect } from "react";
-import { isMobile } from "react-device-detect";
 import {
     fetchSignInMethodsForEmail,
     EmailAuthProvider,
     UserCredential,
     GoogleAuthProvider,
-    getRedirectResult,
-    signInWithRedirect,
     signInWithPopup,
     AuthProvider,
 } from "firebase/auth";
 
 import { auth } from "./Firebase";
+
+type OnSuccess = (fb: UserCredential) => Promise<void>;
 
 const _onError = async (error) => {
     console.error(error);
@@ -39,64 +37,20 @@ const _onError = async (error) => {
     return errorMessage;
 };
 
-export const onAuthSuccess = async (firebaseUser: UserCredential | null) => {
-    // The signed-in user info.
+const thirdPartyAuth =
+    (provider: AuthProvider) =>
+    async (onSuccess: OnSuccess): Promise<void> => {
+        try {
+            // FIXME: this doesn't work for mobile
+            const result = await signInWithPopup(auth, provider);
 
-    if (!firebaseUser) {
-        return null;
-    }
+            await onSuccess(result);
+        } catch (err) {
+            const errorMessage = await _onError(err);
 
-    const user = firebaseUser.user;
-
-    let firstName = "";
-    let lastName = "";
-    if (user.displayName) {
-        const name = user.displayName.split(" ");
-        if (name.length >= 1) {
-            firstName = name[0];
+            throw new Error(errorMessage);
         }
-        if (name.length >= 2) {
-            lastName = name.slice(1).join(" ");
-        }
-    }
-
-    return {
-        provider: "firebase",
-        providerId: user.uid,
-        firstName,
-        lastName,
     };
-};
-
-const listenForFirebaseRedirect = () => {
-    getRedirectResult(auth).then(onAuthSuccess).catch(_onError);
-};
-
-const useFirebaseRedirectListener = () => {
-    useEffect(() => {
-        listenForFirebaseRedirect();
-    }, []);
-};
-
-const thirdPartyAuth = (provider: AuthProvider) => async (): Promise<void> => {
-    try {
-        // Need to use with redirect for mobile else it doesn't work
-        // in safari
-        const thirdPartyAuthFxn = isMobile
-            ? () => signInWithRedirect(auth, provider)
-            : () => signInWithPopup(auth, provider);
-
-        const result = await thirdPartyAuthFxn();
-
-        if (result) {
-            await onAuthSuccess(result);
-        }
-    } catch (err) {
-        const errorMessage = await _onError(err);
-
-        throw new Error(errorMessage);
-    }
-};
 
 export const getLoginErrorMessage = (methods: string[]) => {
     if (!methods.length) {
@@ -107,22 +61,11 @@ export const getLoginErrorMessage = (methods: string[]) => {
         return "Looks like you already signed up with Google. Please sign in with Google.";
     }
 
-    if (methods.includes("facebook.com")) {
-        return "Looks like you already signed up with a Facebook account. Please sign in with Facebook.";
-    }
-
-    if (methods.includes("apple.com")) {
-        return "Looks like you already signed up with an Apple account. Please sign in with Apple.";
-    }
-
     return "Failed to login.";
 };
 
 const Authentication = {
-    onAuthSuccess,
     google: thirdPartyAuth(new GoogleAuthProvider()),
-    listenForFirebaseRedirect,
-    useFirebaseRedirectListener,
 };
 
 export default Authentication;

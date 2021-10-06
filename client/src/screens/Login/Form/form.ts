@@ -1,4 +1,3 @@
-import _ from "lodash";
 import * as yup from "yup";
 
 export type FormValues = {
