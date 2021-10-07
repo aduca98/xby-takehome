@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { Field, Formik, FormikHelpers, FormikProps } from "formik";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { CreateUserInput } from "src/api/graphql/generated/types";
 import { Button, Colors, Input } from "src/components";
 import { CREATE_USER } from "src/api/graphql";
@@ -10,13 +10,18 @@ import * as shortid from "shortid";
 import { INITIAL_USER, UserFormValues, UserValidator } from "./form";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { auth } from "src/utils";
+import { useSelector } from "react-redux";
+import { getUserAuthStatus } from "src/redux/user";
+import { useHistory } from "react-router";
 
 type Props = {
     onSuccess: () => void;
 };
 
 const Form = ({ onSuccess }: Props) => {
+    const status = useSelector(getUserAuthStatus);
     const [createUser] = useMutation(CREATE_USER);
+    const history = useHistory();
 
     const onSubmit = useCallback(
         async (
@@ -60,6 +65,14 @@ const Form = ({ onSuccess }: Props) => {
         },
         []
     );
+
+    // if user is already logged in don't let them sign up again, they should
+    // logout first
+    useEffect(() => {
+        if (status === "LOGGED_IN") {
+            history.push(`/questions`);
+        }
+    }, [status]);
 
     return (
         <Formik
